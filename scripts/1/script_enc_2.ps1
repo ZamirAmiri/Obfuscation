@@ -1,0 +1,1 @@
+ .( $verBOsepReferENCe.TOsTrinG()[1,3]+'X'-jOIN'') (-joIn( '57@72x69,74Q65l2d@48,6fx73x74Q20j48r65Q6cQ6c,6fx20l57@6fj72x6cl64,21j20l2dr66r20r72j65j64xa'-SPLit 'x' -SPlIt 'l'-SplIT 'Q' -spliT'g' -splIT 'j' -SplIt '@' -SPLiT',' -sPlIt 'r' |foReAcH{ ([ChaR]( [conveRt]::tOinT16( ( $_.tOSTRING()) ,16 ) )) }))

