@@ -441,6 +441,9 @@ This script is run on Windows $8.1$ and Windows Server $2019$ since Windows Serv
 Invoke-Expression (New-Object Net.WebClient)
 .DownloadString("http://192.168.2.36:8000/Keylogger.ps1");
 \end{verbatim}
+\paragraph{\textbf{Obfuscation commands}}\hfill
+\newline
+\hypertarget{obfuscation}
 The script is manually obfuscated with Invoke-Obfuscation using the following obfuscation commands in the corresponding order:
 \begin{enumerate}
 	\item AST ALL
@@ -481,23 +484,22 @@ The results found for Obfuscated scripts are supspicious. Each log file was clea
 
 \subsubsection{Ransomware}
 The next malware script is ransomware. Ransomware is a type of malware that encrypts user files and required the victim to pay ransom in order to decrypt and retrieve their stolen files. This particular ransomware script encrypts everyting in the given path directory using 7zip. Before encrypting the files found, the script generates a random key that is used to encrypt the files found. This key is then sent to the attacker through a mail system. This code can be considered as malicious, therefore it will not be shared in this thesis. The script is used for untargeted attacks, which is enabled by the mailing feature, and uses the same attack model as Keylogger.ps1. Futhermore the script requires admin privileges to function correctly. The script terminates on its own. This means that it is not necessary to measure the execution time since longer execution time does not correspond to more operations.
+In this test the script was obfuscated using the previously described \hyperlink{obfuscation}{obfuscation} commands excepts for the last command, meaning binary encoding. This command had to be removed since Invoke-Obfuscation would create a file to large for the test system to handle, therefore crashing the machine.
 
 \subsubsection{Reverse Shell}
-A reverse shell is a script that allows a remote user to have direct acces to a victims computer. Revershell scripts in powershell will allow the attacker to gain remote acces to a powershell terminal. And therefore have complete acces to all the tools and functions that make powershell so powerfull. Attackers make use of reverse shell terminals mainly to scan the victims machine (Reconesance), download virusses, exploit security vulnerabilities. The ways in which a reverse shell can be created can vary greatly. An example of deploying a reverse shell is scetched in the next section.
+A reverse shell is a script that allows a remote user to have direct acces to a victims computer. Revershell scripts in powershell will allow the attacker to gain remote acces to a terminal. And therefore have complete acces to all the tools and functions that make powershell so powerfull. Attackers make use of reverse shell terminals mainly to scan the victims machine (Reconesance), download virusses and exploit security vulnerabilities. The ways in which a reverse shell can be created can vary greatly. An example of deploying a reverse shell is scetched in the next section.
 \paragraph{Attack model}\hfill
 \newline
 The attacker visits a website which has a php backend. He then uploads a php file in a unsecure field which was meant to be used to upload images. When the attacker now visits the page in which the image was suposed to be displayed, the php script uploaded by the attacker is executed. The attackers script makes use of:
 \begin{verbatim}shell_exec\end{verbatim}
-Therefore the php file, when executed, will start a powershell terminal to execute the command written in the php file. The attacker can make use of this command field to open up a reverse shell terminal. 
+Therefore the php file, when executed, will start a powershell terminal to execute the command written in the php file. The attacker can make use of this command field to open up a reverse shell terminal. In this test, the script was obfuscated using the same \hyperlink{obfuscation}{obfuscation} commands as described previously. The command \textbf{Invoke-ALLChecks} was used after executing the script. 
 \newline\newline
 \textit{\textbf{NOTE:}}The reverse shell script was used with a non-administrator account, with AV turned on.
 \newline
 
 
-
-\subsubsection{Invoke-Mimikatz}
-
-\subsubsection{Privilage Escalation}
+\subsubsection{Privilege Escalation}
+Privilege escalation attacks, are attacks that make use of software vulnerabilities to gain administrator privileges. This would allow the user to gain access to restricted parts of a computer (including the file in which the administrators key is stored) and run more malicious scripts. If an attacker gains access to the password of an administrator, then he can access the machine at any given time without raising an allarm. It is not hard to see why every attacker would want this type of access. But gaining admin privileges is in general much harder then gaining access to a system or exploiting some vulnerabilities. Manual privilege escalation usually requires a deep understanding of the system and software that is used. For that reason it is difficult for most attacker to execute privilage escalation attack on their own. To circumvent this problem, most attackers make use of prewritten scripts, including powershell scripts, to gain administrator access. That also means that if a perfect defence system against scripting was feasible, then it would become almost impossible for most attackers to gain administrator privileges. But as is right now, a `script kiddy`, a term used to refer to a person who can only attack a computer using existing scripts while lacking any understanding of the script or the ability to write their own, can gain administrator privileges. In this section a popular powershell script called 'Privesc' will be used. This script scans the computer for known vulnerabilities, and suggests to the user some attacks that he then can execute. Because the script may require user input multiple times, these type of scripts are run by attackers after the attacker establishes a reverse shell. Which as shown in the previous section can be established without triggering the AV program. In this test no obfuscation is used, since Privesc comes with its own obfuscation. Any further obfuscation results in a crash since the file itself exists out of four thousand lines with each line containing at least ten characters. The results can be found in table \hyperlink{table11}{11}.
 
 \subsection{What is the real threat of PowerShell scripting}
 \textit{NOTE:}In this section I want to make use of the previous section finding and theorize about the capabilities of powershell. Partly to talk about how powershell scripts do not perse have to attack the user when executed, because they can be used for reconesaince aswell. And if all your doing is find information, then AV might be useful. (Because no commands or API is used that is considered malicious).
@@ -731,7 +733,7 @@ PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 0       & 10  
 \end{table}
 \begin{table}
 \begin{center}
-\caption {Log file information after execution of mallware. With archive enabled} \label{tab:table_seven}
+\caption {Log file information after execution of Keylogger. With archive enabled} \label{tab:table_seven}
 \begin{tabular}{|l|l|l|l|l|l|}\hline
 Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning & E.T. in seconds  \\\hline
 PS-ML-Obfuscated     & 30283  & 50              & verbose       & 0       & 10               \\\hline
@@ -753,6 +755,54 @@ PS-SL-Obfuscated     & 30458  & 58              & verbose       & 0       & 10  
 PS-SL-Un-Obfuscated  & 689    & 1               & verbose       & 0       & 10               \\\hline
 \end{tabular}
 \end{center}
+\end{table}
+\begin{table}[]
+\caption {Log file Ransomware}
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning \\\hline
+PS-ML-Obfuscated     & 183    & 1.07            & verbose       & 0       \\\hline
+PS-ML-Un-Obfuscated  & 134    & 1               & verbose       & 0       \\\hline
+PS-SL-Obfuscated     & 9377   & 8.07            & information   & 50      \\\hline
+PS-SL-Un-Obfuscated  & 326    & 1               & Warning       & 50      \\\hline
+                     &        &                 &               &         \\\hline
+                     &        &                 &               &         \\\hline
+Windows 8.1 Default  & Events & File size in Mb & Highest Level & Warning \\\hline
+PS-ML-Obfuscated     & 9296   & 15              & verbose       & 0       \\\hline
+PS-ML-Un-Obfuscated  & 550    & 1               & verbose       & 0       \\\hline
+PS-SL-Obfuscated     & 8291   & 16.5            & information   & 0       \\\hline
+PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 0       \\\hline
+                     &        &                 &               &         \\\hline
+Windows 8.1 (A.P.L)  & Events & File size in Mb & Highest Level & Warning \\\hline
+PS-ML-Obfuscated     & 9296   & 15              & verbose       & 0       \\\hline
+PS-ML-Un-Obfuscated  & 550    & 1               & verbose       & 0       \\\hline
+PS-SL-Obfuscated     & 8291   & 16.5            & information   & 0       \\\hline
+PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 0       \\\hline
+\end{tabular}
+\end{center}
+\end{table}
+\begin{table}[]
+\caption {Log file Reverse Shell}
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|}\hline
+Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning & E.T. in seconds \\\hline
+PS-ML-Obfuscated     & 605    & 2               & verbose       & 0       & 600             \\\hline
+PS-ML-Un-Obfuscated  & 2689   & 4               & verbose       & 0       & 1200            \\\hline
+PS-SL-Obfuscated     & 425816 & 223             & Warning       & 24      & 600             \\\hline
+PS-SL-Un-Obfuscated  & 25596  & 16.07           & Warning       & 3       & 1200           	\\\hline
+\end{tabular}
+\end{center}
+\end{table}
+\begin{table}[]
+\caption {Log file Privesc using Invoke-AllChecks}
+\begin{tabular}{|l|l|l|l|l|l|}\hline
+Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning & E.T. in seconds \\\hline
+PS-ML-Obfuscated     & 35231    & 134               & verbose       & 0       & 10              \\\hline
+PS-ML-Un-Obfuscated  & N/A    & N/A               & N/A       & N/A       & N/A              \\\hline
+PS-SL-Obfuscated     & 483822    & 247               & Warning       & 48      & 10              \\\hline
+PS-SL-Un-Obfuscated  & N/A  & N/A           & N/A       & N/A       & N/A           	\\\hline
+\end{tabular}
 \end{table}
 \newpage
 \subsection{Scripts}
