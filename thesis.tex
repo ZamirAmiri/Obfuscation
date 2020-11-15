@@ -321,7 +321,6 @@ A short tutorial on how to use Invoke-Obfuscation can be found by typing \textbf
 This thesis will make use of these terms when refering to an obfuscation technique used on a script.
 
 \section{Sub-questions}
-
 \subsection{Which obfuscation methods are labeled malicious by antivirus software, regardlesss of the content of the script}
 [\hyperlink{2}{2}]It is well known that the microsoft team already knows about the issues of obfuscated code. Therefore it can be assumed that some protection measures against obfuscation of code has already taken place by both [\hyperlink{12}{12}] windows tools such as windows-defender but also third party antivirus software. This became more apparent at the start of this project, when some non malicious code was labeled as malicious by windows defender and other antivirus programs. This created a new sub-questions that had to be answered first before any other question could be answered. Namely which obfuscated techniques are automatically considered to be malware by a system, regardless of the actual function of the code. To find the answer for this question a simple \hyperlink{script1}{script} has been executed with different obfuscation techniques using Invoke-Obfuscation. The results can be found in the table 1. The table has four columns with the necessary information required in order to reproduce the results, that is:
 \begin{enumerate}
@@ -499,10 +498,17 @@ Therefore the php file, when executed, will start a powershell terminal to execu
 
 
 \subsubsection{Privilege Escalation}
-Privilege escalation attacks, are attacks that make use of software vulnerabilities to gain administrator privileges. This would allow the user to gain access to restricted parts of a computer (including the file in which the administrators key is stored) and run more malicious scripts. If an attacker gains access to the password of an administrator, then he can access the machine at any given time without raising an allarm. It is not hard to see why every attacker would want this type of access. But gaining admin privileges is in general much harder then gaining access to a system or exploiting some vulnerabilities. Manual privilege escalation usually requires a deep understanding of the system and software that is used. For that reason it is difficult for most attacker to execute privilage escalation attack on their own. To circumvent this problem, most attackers make use of prewritten scripts, including powershell scripts, to gain administrator access. That also means that if a perfect defence system against scripting was feasible, then it would become almost impossible for most attackers to gain administrator privileges. But as is right now, a `script kiddy`, a term used to refer to a person who can only attack a computer using existing scripts while lacking any understanding of the script or the ability to write their own, can gain administrator privileges. In this section a popular powershell script called 'Privesc' will be used. This script scans the computer for known vulnerabilities, and suggests to the user some attacks that he then can execute. Because the script may require user input multiple times, these type of scripts are run by attackers after the attacker establishes a reverse shell. Which as shown in the previous section can be established without triggering the AV program. In this test no obfuscation is used, since Privesc comes with its own obfuscation. Any further obfuscation results in a crash since the file itself exists out of four thousand lines with each line containing at least ten characters. The results can be found in table \hyperlink{table11}{11}.
+Privilege escalation attacks, are attacks that make use of software vulnerabilities to gain administrator privileges. This would allow the user to gain access to restricted parts of a computer (including the file in which the administrators key is stored) and run more malicious scripts. If an attacker gains access to the password of an administrator, then he can access the machine at any given time without raising an allarm. It is not hard to see why every attacker would want this type of access. But gaining admin privileges is in general much harder then gaining access to a system or exploiting some vulnerabilities. Manual privilege escalation usually requires a deep understanding of the system and software that is used. For that reason it is difficult for most attacker to execute privilage escalation attack on their own. To circumvent this problem, most attackers make use of prewritten scripts, including powershell scripts, to gain administrator access. That also means that if a perfect defence system against scripting was feasible, then it would become almost impossible for most attackers to gain administrator privileges. But as is right now, a `script kiddy`, a term used to refer to a person who can only attack a computer using existing scripts while lacking any understanding of the script or the ability to write their own, can gain administrator privileges. In this section a popular powershell script called 'Privesc' will be used. This script scans the computer for known vulnerabilities, and suggests to the user some attacks that he then can execute. Because the script may require user input multiple times, these type of scripts are run by attackers after the attacker establishes a reverse shell. Which as shown in the previous section can be established without triggering the AV program. In this test no obfuscation is used, since Privesc comes with its own obfuscation. Any further obfuscation results in a crash since the file itself exists out of four thousand lines with each line containing at least ten characters. The results can be found in table $11$.
 
-\subsection{What is the real threat of PowerShell scripting}
-\textit{NOTE:}In this section I want to make use of the previous section finding and theorize about the capabilities of powershell. Partly to talk about how powershell scripts do not perse have to attack the user when executed, because they can be used for reconesaince aswell. And if all your doing is find information, then AV might be useful. (Because no commands or API is used that is considered malicious).
+\subsubsection{Conclusion}
+During the execution of all scripts, the powershell logging tool generated a large number of log entries. While the execution time was fairly short, the number of log entries created easely exceded hunderds of megabytes. The AV was able to detect the keylogger script, and the ransomware script, while failing to detect the reverse shell script and the privilege escalation script. During the execution of Privesc.ps1, the DLLInjection command was used to inject a command inside a dll service. This was also not detected by the AV. Since the AV was not able to detect the scripts, it can also be assumed that the AMSI tool did not detect it either, which shows that there are scripts that attackers can use during their attacking process, that will go through the default defence system of the average user. But when looking at the event logger, we can see in table \hyperlink{table9}{9} and table{table10}{10} that, the event logger was able to detect some supicious activity which were documented in the log file with the warning level. Further more the event viewer shows that some scriptblocks are to large to fit in one event viewer. This can be seen in image \hyperlink{fig1}{1}, where the log event states:
+\begin{verbatim}
+Creating Scriptblock text (2 of 52)
+\end{verbatim}
+This means that a very large script, large as in the script contains a high number of symbols, is executed. As mentioned before the obfuscation techniques of Invoke-Obfuscation create large scripts when obfuscated. Most scripts when obfuscated end up beign larger then five hundred thousand symbols. So this event log, could perhaps indicate that an obuscated file was executed. 
+The windows versions,Windows $7$ and $8$ Home edition, which do not have scriptblock logging and module logging, did not show any sign of suspicous behavior. Which means that a new line of defence built around logging would be useless. It might be worth noting that scriptblock and module logging can be added to windows $7$ and $8$ if the OS is upgraded to pro edition. It is fair to assume that most people will not buy the upgrade, therefore leaving them vulnerable to some attacks. But if scriptblock and module logging are enabled and configured correctly, then they can act as another layer of defence. Some possible configurations will be presented in the next section.
+
+
 \subsection{What additional defence systems can be deployed against obfuscated powershell scripts}
 \textit{Note:}Here I would like to write about and test some MTD systems. Also I was able to come up with a new defence system during the execution of some of my scripts. I dont think I will have enough time to write it and test it. How ever I can write in psuedo-code and use my findings like in table 6 and 7, to reason why this defence system might be better then AV-software or even Microsoft AMSI defence tools.
 \newpage
@@ -706,7 +712,8 @@ Compress    & Win 2019 & Windows Defender & No       \\ \hline
 \end{center}
 \end{table}
 \begin{table}
-\caption {Log file information after execution of mallware.} \label{tab:table_six}
+\caption {Log file information after execution of mallware.}
+\label{tab:table_six}
 \begin{center}
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
@@ -733,7 +740,8 @@ PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 0       & 10  
 \end{table}
 \begin{table}
 \begin{center}
-\caption {Log file information after execution of Keylogger. With archive enabled} \label{tab:table_seven}
+\caption {Log file information after execution of Keylogger. With archive enabled}
+\label{tab:table_seven}
 \begin{tabular}{|l|l|l|l|l|l|}\hline
 Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning & E.T. in seconds  \\\hline
 PS-ML-Obfuscated     & 30283  & 50              & verbose       & 0       & 10               \\\hline
@@ -758,6 +766,7 @@ PS-SL-Un-Obfuscated  & 689    & 1               & verbose       & 0       & 10  
 \end{table}
 \begin{table}[]
 \caption {Log file Ransomware}
+\label{tab:table_eight}
 \begin{center}
 \begin{tabular}{|l|l|l|l|l|}
 \hline
@@ -784,6 +793,8 @@ PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 0       \\\hli
 \end{table}
 \begin{table}[]
 \caption {Log file Reverse Shell}
+\label{tab:table_nine}
+\hypertarget{table9}\hfill
 \begin{center}
 \begin{tabular}{|l|l|l|l|l|l|}\hline
 Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning & E.T. in seconds \\\hline
@@ -796,6 +807,7 @@ PS-SL-Un-Obfuscated  & 25596  & 16.07           & Warning       & 3       & 1200
 \end{table}
 \begin{table}[]
 \caption {Log file Privesc using Invoke-AllChecks}
+\label{tab:table_ten}
 \begin{tabular}{|l|l|l|l|l|l|}\hline
 Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning & E.T. in seconds \\\hline
 PS-ML-Obfuscated     & 35231    & 134               & verbose       & 0       & 10              \\\hline
