@@ -3,6 +3,7 @@
 \usepackage{blindtext}
 \usepackage{hyperref}
 \usepackage{graphicx}
+\usepackage{listings}
 \graphicspath{ {./Images/} }
 \hypersetup{
     colorlinks=true,
@@ -661,7 +662,78 @@ To gain a log file whith the least amount of noise possible, as in log entries t
 \textit{Figure 5: ScriptBlockLogging log for Invoke-SuperScript.ps1 Unobfuscated}\\
 \includegraphics[scale=0.45]{21.png}
 The log file was able to mark the scripts with the warning level. This already seems more promising then the AV-programs. However as mentioned in seciton 3.2, the attacker can obfuscate their script inorder to overwrite important log entries and therefore cover their tracks. Although this attack was tested on a machine using the archiving property of Event Viewer, the default setting is to overwrite old event entries. Meaning that a obfuscated script would ingeneral overwrite the important log entries shown in figure $5$. In the next section, the thesis will discus some strategies to circumvent this issue.
+\newpage
 \subsection{What additional defence systems can be deployed against obfuscated powershell scripts}
+The default defense system on a windows machine, as seen in the previous section, does not seem to be enough. Therefore it is important to look for alternative ways to defend against powershell attacking scripts. This section will discus several additional defence techinques, and will analise their potential.
+\subsubsection{PowerShell event logging}
+Most of this thesis revolved around the powershell logging tool. Therefore this feature is discussed first. The powershell logging tool as meantioned previously consists out of multiple parts. But the most important features of the logging tool are scriptblock logging and module logging. During the tests it became apparent that the module logging feature is unfit to work as a defence mechanism. This is because, while module logging does accurately log the individual commands, it cannot document the whole attack. This means that a reader of these log files, human or not, will have difficulties to gain a complete picture of the attack. This would make an attack hard to recognise. Scriptblock logging on the other hand is a very powerfull logging feature. During the test, scriptblock logging was always able to deobfuscate the scripts correctly. If used correctly along side of some other defence software, e.g. AV, this feature could help with detecting obufscated powershell scripts. Therefore a further analysis of this feature has been made.
+Each logfile in Event Viewer has a few properties that can be set by the system administrator. These properties are:
+\begin{enumerate}
+	\item Filesize
+	\item Log Path
+	\item Overwrite the oldest entry when maximum size has been reached.
+	\item Archive the log file when mazimum size has been reached.
+	\item Do not overwrite events (Clear logs manually)
+\end{enumerate}
+The pros and cons of each property will be discussed further below. But it may be usefull to first discus some defence strategies that can make use of powershell logging in order to make an attack more difficult.
+\paragraph{Attaching a task to logfile}\hfill
+\newline
+One feature that the event viewing software has is that it allows the system admin to attach a task to a log. If the system admin attaches a task that will mail the system admin after the logfile containst a log entry that has a warning level severity, then this could already help against attacker. As shown in the previous secion, while some scripts like the reverse shell script, cannot be detected by AV or AMSI, they were accurately logged and labeled with a warning level. As it can not be expected from a system admin to read the logs created, a task that notifies the system admin that a warning level event was logged could help the system admin to detect these types of attacks. In order to bypass this type of defence, the attacker would have to bypass or deactivate the logging system altogether. As shown before in section $3.3$, disabling powershell logging creates one last event in the event viewer which has a warning level severity. Therefore an admin would still be notified by the system, which potentially might reveal the attack. In fact a log in which the deactivation of the powershell logging is stated can ingeneral be seen as an attack as the system admin will probably not to this on his own.
+\paragraph{Machine learning using Scriptblock logging}\hfill
+\newline
+As the old signature based aproach, that is still used by most AV software, has become more irrelevant, it has created a rise in research in alternative forms of defence. One of these is the usage of machine learning. Numerous research has been done in which a ML-machine is trained on attacking scripts and has to detect new attacking scripts. These types of software can make greate use of the scriptblock logging feature of powershell logging. An log entry has some specific information that is hard to gain without using the logging tool. This information could reveal a pattern in an attack that may not be recognised otherwhise. A log enty looks as followed.
+\begin{lstlisting}
+<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'>
+<System>
+	<Provider Name='Microsoft-Windows-PowerShell'
+		Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/>
+	<EventID>4104</EventID>
+	<Version>1</Version>
+	<Level>5</Level>
+	<Task>2</Task>
+	<Opcode>15</Opcode>
+	<Keywords>0x0</Keywords>
+	<TimeCreated SystemTime='2020-11-24T23:51:38.110905600Z'/>
+	<EventRecordID>3678861</EventRecordID>
+	<Correlation 
+		ActivityID='{cd0c0d8f-c305-0000-60b6-0ccd05c3d601}'/>
+	<Execution ProcessID='888' ThreadID='4004'/>
+	<Channel>
+		Microsoft-Windows-PowerShell/Operational
+	</Channel>
+	<Computer>WIN-H8C7LGTI40B</Computer>
+	<Security 
+		UserID='S-1-5-21-3092757730-2535432651-4254931961-500'
+	/>
+</System>
+<EventData>
+	<Data Name='MessageNumber'>1</Data>
+	<Data Name='MessageTotal'>1</Data>
+	<Data Name='ScriptBlockText'>prompt</Data>
+	<Data Name='ScriptBlockId'>
+		e05f3001-ea7a-42ba-9da1-44bb4f5f08ba
+	</Data>
+	<Data Name='Path'></Data>
+</EventData>
+<RenderingInfo Culture='en-US'>
+	<Message>Creating Scriptblock text (1 of 1):
+		prompt
+		ScriptBlock ID: e05f3001-ea7a-42ba-9da1-44bb4f5f08ba
+		Path: 
+	</Message>
+	<Level>Verbose</Level>
+	<Task>Execute a Remote Command</Task>
+	<Opcode>On create calls</Opcode>
+	<Channel>Microsoft-Windows-PowerShell/Operational</Channel>
+	<Provider></Provider>
+	<Keywords></Keywords>
+</RenderingInfo>
+</Event>
+\end{lstlisting}
+Information such as the GUID could allow for the finding of a certain pattern in attacks. But the effectiveness of this type of defence requires more research. For a better view of what the logfile of an attack looks like, two xml files will be uploaded to a public \href{https://github.com/ZamirAmiri/Obfuscation}{repository}.
+\paragraph{Overwrite the oldest entry when maximum size has been reached.}\hfill
+\newline
+This is the default settings used by all logfiles. When this option is chosen, the event viewer will overwrite the oldest log. The advantage of this option is that it does not use a large part of your hard disck. However this does mean that an attacker could abuse this option by executing some obfuscated non malicious script at the end of their attack in order to cover their tracks. As seen in the tables \hyperlink{table6}{6} and \hyperlink{table7}{7}, obfuscated code can create a large number of events. Therefore obfuscating a simple script could already create sufficient number of events such that the attackers activity is completely overwritten. 
 \newpage
 \section{Sources}
 \begin{enumerate}
