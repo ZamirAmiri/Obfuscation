@@ -676,64 +676,68 @@ Each logfile in Event Viewer has a few properties that can be set by the system 
 	\item Do not overwrite events (Clear logs manually)
 \end{enumerate}
 The pros and cons of each property will be discussed further below. But it may be usefull to first discus some defence strategies that can make use of powershell logging in order to make an attack more difficult.
-\paragraph{Attaching a task to logfile}\hfill
-\newline
+\subsubsection{Attaching a task to logfile}
 One feature that the event viewing software has is that it allows the system admin to attach a task to a log. If the system admin attaches a task that will mail the system admin after the logfile containst a log entry that has a warning level severity, then this could already help against attacker. As shown in the previous secion, while some scripts like the reverse shell script, cannot be detected by AV or AMSI, they were accurately logged and labeled with a warning level. As it can not be expected from a system admin to read the logs created, a task that notifies the system admin that a warning level event was logged could help the system admin to detect these types of attacks. In order to bypass this type of defence, the attacker would have to bypass or deactivate the logging system altogether. As shown before in section $3.3$, disabling powershell logging creates one last event in the event viewer which has a warning level severity. Therefore an admin would still be notified by the system, which potentially might reveal the attack. In fact a log in which the deactivation of the powershell logging is stated can ingeneral be seen as an attack as the system admin will probably not to this on his own.
-\paragraph{Machine learning using Scriptblock logging}\hfill
-\newline
-As the old signature based aproach, that is still used by most AV software, has become more irrelevant, it has created a rise in research in alternative forms of defence. One of these is the usage of machine learning. Numerous research has been done in which a ML-machine is trained on attacking scripts and has to detect new attacking scripts. These types of software can make greate use of the scriptblock logging feature of powershell logging. An log entry has some specific information that is hard to gain without using the logging tool. This information could reveal a pattern in an attack that may not be recognised otherwhise. A log enty looks as followed.
-\begin{lstlisting}
-<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'>
-<System>
-	<Provider Name='Microsoft-Windows-PowerShell'
-		Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/>
-	<EventID>4104</EventID>
-	<Version>1</Version>
-	<Level>5</Level>
-	<Task>2</Task>
-	<Opcode>15</Opcode>
-	<Keywords>0x0</Keywords>
-	<TimeCreated SystemTime='2020-11-24T23:51:38.110905600Z'/>
-	<EventRecordID>3678861</EventRecordID>
-	<Correlation 
-		ActivityID='{cd0c0d8f-c305-0000-60b6-0ccd05c3d601}'/>
-	<Execution ProcessID='888' ThreadID='4004'/>
-	<Channel>
-		Microsoft-Windows-PowerShell/Operational
-	</Channel>
-	<Computer>WIN-H8C7LGTI40B</Computer>
-	<Security 
-		UserID='S-1-5-21-3092757730-2535432651-4254931961-500'
-	/>
-</System>
-<EventData>
-	<Data Name='MessageNumber'>1</Data>
-	<Data Name='MessageTotal'>1</Data>
-	<Data Name='ScriptBlockText'>prompt</Data>
-	<Data Name='ScriptBlockId'>
-		e05f3001-ea7a-42ba-9da1-44bb4f5f08ba
-	</Data>
-	<Data Name='Path'></Data>
-</EventData>
-<RenderingInfo Culture='en-US'>
-	<Message>Creating Scriptblock text (1 of 1):
-		prompt
-		ScriptBlock ID: e05f3001-ea7a-42ba-9da1-44bb4f5f08ba
-		Path: 
-	</Message>
-	<Level>Verbose</Level>
-	<Task>Execute a Remote Command</Task>
-	<Opcode>On create calls</Opcode>
-	<Channel>Microsoft-Windows-PowerShell/Operational</Channel>
-	<Provider></Provider>
-	<Keywords></Keywords>
-</RenderingInfo>
-</Event>
-\end{lstlisting}
-Information such as the GUID could allow for the finding of a certain pattern in attacks. But the effectiveness of this type of defence requires more research. For a better view of what the logfile of an attack looks like, two xml files will be uploaded to a public \href{https://github.com/ZamirAmiri/Obfuscation}{repository}.
-\paragraph{Overwrite the oldest entry when maximum size has been reached.}\hfill
-\newline
-This is the default settings used by all logfiles. When this option is chosen, the event viewer will overwrite the oldest log. The advantage of this option is that it does not use a large part of your hard disck. However this does mean that an attacker could abuse this option by executing some obfuscated non malicious script at the end of their attack in order to cover their tracks. As seen in the tables \hyperlink{table6}{6} and \hyperlink{table7}{7}, obfuscated code can create a large number of events. Therefore obfuscating a simple script could already create sufficient number of events such that the attackers activity is completely overwritten. 
+\subsubsection{Machine learning using Scriptblock logging}
+As the old signature based aproach, that is still used by most AV software, has become more irrelevant, it has created a rise in research in alternative forms of defence. One of these is the usage of machine learning. Numerous research has been done in which a ML-machine is trained on attacking scripts and has to detect new attacking scripts. These types of software can make greate use of the scriptblock logging feature of powershell logging. An log entry has some specific information that is hard to gain without using the logging tool. This information could reveal a pattern in an attack that may not be recognised otherwhise. A sample of the log file can be found in the \hyperlink{output2}{attachements}.\\
+Information such as the GUID could allow for the finding of a certain pattern in attacks. [\hyperlink{18}{18}]While the detection of obfuscation by ML-systems have shown great result, the detection of mallware using ML has not been as effective. Therefore it might help to look at the whole attack process using powershell logging, instead of the scripts alone. For a better view of what the logfile of an attack looks like, two xml files will be uploaded to a public \href{https://github.com/ZamirAmiri/Obfuscation}{repository}.
+\subsubsection{SIEM-tools}
+SIEM or Security Information and Event Management tools work as a parser of the log events. Some of these types of software store the events logged on their systems which means that the system admin does not have to archive the logs himself. The advantages and disadvantages of this system will be further analised in an upcoming section. In general it is difficult to state the effectiveness of SIEM-tools, since they can vary greatly in their capabilities. Further and more specific research is required in order to analize their effectiveness.
+\subsubsection{Logging rate and log size}
+During this research, it became clear that obfuscated code would sometimes create an event to large to store in one log entry. As shown in figure 1. This information, altough it does not guarantee that an obfuscated script is beign executed, raises some suspicion. While this might need further analysis, it seems to be very clear that normal scripts usually do not need more then one log entry to store the whole event. Therefore it seems that the chances of finding obfuscated script based on this information is high. A suggestion for system admins would be to attach a task to the log file that will look for these types of occurences and notify the system admin when an event that has been logged over multiple log-entries has been found.\newline
+During the execution of the obfuscated script, an increase in the log rate was noticed. A sample of this information can be found in table six to nine in the attachements. For example the log rate for obfuscated reverse-shell scriptblock logging was $709$ log entries per second. While the unobfuscated version of the same script had a log rate of $21$ log entries per second. It might also be worth noting that the obfuscated version of Privesc had a log rate of $48.382$ entries per second.
+Perhaps SIEM-tools could make use of this information to detect supicious activity.
+Further more, during this research the scripts usually had five to six layes of obfuscation. Another research pointed out that $90$\% of the scripts that they had found, had only one layer of obfuscation. However it is still worth pointing out the increase in log rates and a defence system based around the log rate might help to reveal some otherwise undetected attacks.
+\subsubsection{Overwrite the oldest entry when maximum size has been reached.}
+This is the default settings used by all logfiles. When this option is chosen, the event viewer will overwrite the oldest log. The advantage of this option is that it does not use a large part of your hard disck. However this does mean that an attacker could abuse this option by executing some obfuscated non malicious script at the end of their attack in order to cover their tracks. As seen in the tables \hyperlink{table6}{6} and \hyperlink{table7}{7}, obfuscated code can create a large number of events. Therefore obfuscating a simple script could already create sufficient number of events such that the attackers activity is completely overwritten. This can be circumvented by using a SIEM-tool that stores the created log-entries in the cloud. In this case the attacker could try to overflow the SIEM-tool buffer by generating a large number of events. This can be done by applying multi-layer obfuscation to the scripts used.
+\subsubsection{Archive the log file when mazimum size has been reached.}
+With this option the log file will be stored in the default log folder, which later can be loaded in the event viewer. This method creates a defence against clearing tracks that could have been exploited using the previous option. The attacker will not be able to delete these log files without admin privileges. Therefore this option will detect an attacker who is scanning the machine. Which is the first step of any attacker that gains access to a shell terminal on the victims machine. In section $3.5$ it was shown that both AV and AMSI were not able to detect scanning scripts and it allowed the attacker of section $3.5$ to gain a large data set about the victims machine. By archiving the log file, the system admin will have more time to process the log entries which could result in detecting the attacks. However this option makes the victim machine vulnerable to another type of DOS attack. The attacker could create a script that would work as followed:
+\begin{verbatim}
+  while(true){
+  	./executeObfuscatedHarmlessCode.ps1
+  }
+\end{verbatim}
+Assuming the victim machine has $1$ Tb of disk space and the executeObfuscatedHarmlessCode script has the same logging rate as table \hyperlink{table10}{10}. Then the disk can be filled in $1$ hour and $7$ minutes. This would then freeze the victims machine.
+\subsubsection{Do not overwrite events}
+This option is added to the event viewer for debugging purpouses and should never be used on a machine that is running important programs. Since the machine will not show any logs until the log file has been cleared, it gives the attacker both stealth and it will cover the attackers tracks. 
+\subsubsection{Powershell logging from the attackers perspective.}
+An attacker will be very interested in the options set for powershell logging. Therefore they will try to get this information as soon as possible. Luckely powershell already has a built in feature that allows the attacker to see exactly what options have been chosen for the logging system. This information can be found by using:
+\begin{verbatim}
+ Get-LogProperties
+\end{verbatim}
+The output of this command looks as followed:
+\begin{verbatim}
+Name: Microsoft-Windows-PowerShell/Operational
+Enabled:    True
+Type:       Operational
+Retention:  True
+Autobackup: True
+MaxLogSize: 17301504
+\end{verbatim}
+This data set should be read as followed:\newline\newline
+If retention is false, then the overwrite option has been chosen. If Retention is true and autobackup is true then the archiving option has been selected. And if retention is true but autobackup is false then the clear logs manually option has been chosen. The attacker can also use powershell to read the events stored in the event log. This allows the attacker to get more information on the scripts that are already run on the victim machine. This can be done by using a command that looks similar to the [\hyperlink{19}{19}]following command:
+\begin{verbatim}
+Get-Content -Path C:\Windows\System32\Winevt\
+  Logs\Microsoft-Windows-PowerShell%4Operational.evtx -Tail 50
+\end{verbatim}
+However this can be circumvented by applying a form of moving target defence by renaming the file in the event viewer. In fact a system admin could create a dummy .evtx file with the default in order to trick the attacker. Since the attacker cannot see which task has been attached to the logfile, the best course of action at this state would be to bypass powershell logging all together. It was shown in a previous section that this can be done by disabling powershell logging in the cache. However this command will be stored in the log and could raise suspicion. This brings the attacker to powershell version $2$.
+\subsubsection{Powershell v2}
+Powershell v$2$ is no longer supported by Microsoft. However it still can be used. While some windows machines have powershell v$2$ disabled, this is not always the case. In fact during this thesis, ten different Windows $10$ machines were checked for powershell v$2$. All these machines had this older version of powershell enabled. Furthermore an attacker could attempt to download powershell v$2$ on the victims machine and execute it. Powershell version $2$ does not support AMSI, module- and scriptblock logging. This means that attacks executed on powershell v$2$ have a smalled chance of beign detected. For example, during this thesis is was possible to run PowerUp.ps1 on powershell version two while it was blocked by any other powershell. This script shows the user vulnerabilities that can be used in order to gain admin privileges. Which if gained, would allow the attacker to disable AMSI and powershell logging without beign detected. At this point the attacker would be free to use a larger range of scripts without beign detected. It may be better if Microsoft not only disabled powershell v$2$, but also made it unoperatable on newer windows machines. 
+\subsubsection{Other findings}
+During the tests many attempts were made on attacking the system. In this section a few interesting findings will be mentioned that did not fit any other section but are worth mentioning. In this section a short description of the finding will be given with a potential fix.
+\begin{enumerate}
+	\item AV automatically blocks some scripts like PowerUp.ps1. However if the script is encoded in base64 then the script can bypass the AV. Further more scripts like PowerUp.ps1 are blocked by the antivirus when execution is attempted using \textbf{Invoke-Expression}. However when encoded to base64, the script can be loaded using \textbf{Import-Module}. After that all functions in PowerUp.ps1 can be called. The solution to this problem would be to check if the file is encoded. If the file has been encoded then the AV would have to decode it before scanning.
+	\item Most windows users will not make use of powershell. Therefore it might be safer to have powershell disabled by default. Anyone who needs to use powershell will usually have the technical knowlegde of enabling/installing the software.
+	\item An amsi bypass was used using powershell v$2$, this script succesfully disabled AMSI and no information about the attack was logged.
+	\item When powershell v$2$ was called through cmd-shell with a reverse shell, the connection with the victim machine was disabled. To use powershell -v$2$ while using reverse shell, it is required to send the command as a parameter.
+	For example by typing the following in the cmd terminal:
+	\begin{verbatim}
+	powershell -v 2 -NoProfile -ExecutionPolicy bypass -C "echo 'Hello World!'"
+	\end{verbatim}
+	Once the command has been executed the powershell process will terminate giving the attacker control over the cmd-terminal again. During this process no additional logs were created. However the command given as paramer could be read inside the title bar of the cmd-terminal. Perhaps this finding can help to create a counter measure for the usage of powershell -v$2$.
+\end{enumerate}
+\subsection{How well does Windows detect and defend itself against obfuscated scripts
+and powershell commands?}
 \newpage
 \section{Sources}
 \begin{enumerate}
@@ -755,6 +759,8 @@ Code Using Contextual Embeddings
 \hypertarget{15}\item Phishing – challenges and solutions [Computer Fraud \& Security] - Sathish A.P Kumar
 \hypertarget{16}\item https://github.com/lazywinadmin/PowerShell/blob/master/TOOL-Start-KeyLogger/Start-KeyLogger.ps1
 \hypertarget{17}\item "I Agree to the Terms and Conditions": (How) Do Users Read Privacy Policies Online? An Eye-Tracking Experiment Nili Steinfeld
+\hypertarget{18}\item https://blog.fox-it.com/2020/09/02/machine-learning-from-idea-to-reality-a-powershell-case-study/
+\hypertarget{19}\item https://4sysops.com/archives/parse-log-files-with-powershell/
 \end{enumerate}
 \newpage
 \section{Appendix}
@@ -1031,6 +1037,7 @@ PS-SL-Un-Obfuscated  & 25596  & 16.07           & Warning       & 3       & 1200
 \begin{table}[]
 \caption {Log file Privesc using Invoke-AllChecks}
 \label{tab:table_ten}
+\hypertarget{table10}\hfill
 \begin{tabular}{|l|l|l|l|l|l|}\hline
 Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning & E.T. in seconds \\\hline
 PS-ML-Obfuscated     & 35231    & 134               & verbose       & 0       & 10              \\\hline
@@ -1123,6 +1130,7 @@ function Invoke-SuperScript{
 	Invoke-SSIDExfil;
 }
 \end{verbatim}
+\subsection{Outputs}
 \hypertarget{output1}{\subsubsection{Output:Get-Information}}
 \begin{verbatim}
 get-childitem : Cannot find path 'HKEY_CURRENT_USER\software\
@@ -1415,6 +1423,55 @@ The command completed successfully.
 The following command was not found: wlan show all.
 
 \end{verbatim}
+\hypertarget{output2}{\subsubsection{Single event of Powershell scriptblock logging}}
+\begin{lstlisting}
+<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'>
+<System>
+	<Provider Name='Microsoft-Windows-PowerShell'
+		Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/>
+	<EventID>4104</EventID>
+	<Version>1</Version>
+	<Level>5</Level>
+	<Task>2</Task>
+	<Opcode>15</Opcode>
+	<Keywords>0x0</Keywords>
+	<TimeCreated SystemTime='2020-11-24T23:51:38.110905600Z'/>
+	<EventRecordID>3678861</EventRecordID>
+	<Correlation 
+		ActivityID='{cd0c0d8f-c305-0000-60b6-0ccd05c3d601}'/>
+	<Execution ProcessID='888' ThreadID='4004'/>
+	<Channel>
+		Microsoft-Windows-PowerShell/Operational
+	</Channel>
+	<Computer>WIN-H8C7LGTI40B</Computer>
+	<Security 
+		UserID='S-1-5-21-3092757730-2535432651-4254931961-500'
+	/>
+</System>
+<EventData>
+	<Data Name='MessageNumber'>1</Data>
+	<Data Name='MessageTotal'>1</Data>
+	<Data Name='ScriptBlockText'>prompt</Data>
+	<Data Name='ScriptBlockId'>
+		e05f3001-ea7a-42ba-9da1-44bb4f5f08ba
+	</Data>
+	<Data Name='Path'></Data>
+</EventData>
+<RenderingInfo Culture='en-US'>
+	<Message>Creating Scriptblock text (1 of 1):
+		prompt
+		ScriptBlock ID: e05f3001-ea7a-42ba-9da1-44bb4f5f08ba
+		Path: 
+	</Message>
+	<Level>Verbose</Level>
+	<Task>Execute a Remote Command</Task>
+	<Opcode>On create calls</Opcode>
+	<Channel>Microsoft-Windows-PowerShell/Operational</Channel>
+	<Provider></Provider>
+	<Keywords></Keywords>
+</RenderingInfo>
+</Event>
+\end{lstlisting}
 
 
 %HIER moet nog even naar gekeken worden%
