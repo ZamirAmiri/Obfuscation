@@ -1,1 +1,0 @@
- InVOKe-ExPReSsiON ( [STRiNG]::Join('' , ( '116m81~74}87U70m14a107U76-80&87-3a107~70&79a79U76-3<116m76}81a79U71U2<3z14}69a3a81}70U71U41'.SpLIT( '&Y<maUz}-~' )|FOreACh-OBjEct {[CHAr] ($_ -bXoR '0x23' ) } )))

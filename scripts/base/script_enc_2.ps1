@@ -1,1 +1,0 @@
- -join ( (57,72 , 69 , 74, 65,'2d', 48, '6f' ,73, 74,20 , 48 , 65 ,'6c', '6c' , '6f',20 , 57 ,'6f' ,72 ,'6c', 64, 21,'a') |FOREaCh-oBJECt { ( [Convert]::TOInT16( ($_.tOSTring()) , 16 ) -aS [chAr]) } ) |&((GV '*MdR*').naME[3,11,2]-JOin'')

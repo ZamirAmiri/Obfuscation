@@ -1,1 +1,0 @@
-(new-objECT  SyStEM.iO.StReAmreaDeR(( new-objECT  sYsTEm.Io.cOMPressioN.deFLAtesTream([System.iO.memORySTrEAM][cONVerT]::FROmbasE64STriNg( 'Cy/KLEnV9cgvLlHwSM3JyVcIzy/KSVFU0E1TKEpN4QIA' ), [sYstem.io.coMprEssioN.ComPReSSIONMoDe]::dEcOmPREsS )) ,[tExt.encodIng]::AScIi) ).rEadTOEND() |. ( $shEllid[1]+$sHEllId[13]+'X')
